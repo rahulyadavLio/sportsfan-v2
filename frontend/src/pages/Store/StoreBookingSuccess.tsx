@@ -1,0 +1,103 @@
+import { useNavigate, useParams } from 'react-router';
+import { Check, Calendar, Share2, Bookmark, ArrowLeft } from 'lucide-react';
+
+const coachNames: Record<string, string> = {
+  '1': 'Ravi Singh',
+  '2': 'Priya Sharma',
+  '3': 'Arun Kumar',
+  '4': 'Sneha Patel',
+};
+
+export default function StoreBookingSuccess() {
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const coachName = coachNames[id || '1'] || 'Ravi Singh';
+
+  return (
+    <div className="bg-black w-full flex justify-center h-screen">
+      <div className="w-full max-w-[390px] bg-[#0b0b0f] relative flex flex-col overflow-x-scroll  no-scrollbar h-screen">
+        {/* Glow background */}
+        <div className="absolute top-0 left-0 right-0 h-[350px] overflow-hidden pointer-events-none">
+          <div className="absolute top-[-80px] left-1/2 -translate-x-1/2 w-[300px] h-[300px] rounded-full bg-[rgba(201,17,95,0.18)] blur-[80px]" />
+          <div className="absolute top-[-40px] left-1/2 -translate-x-1/2 w-[150px] h-[150px] rounded-full bg-[rgba(205,98,14,0.2)] blur-[60px]" />
+        </div>
+
+        {/* Back button */}
+        <div className="absolute top-4 left-4 z-20">
+          <button
+            onClick={() => navigate('/')}
+            className="w-[36px] h-[36px] rounded-full bg-[rgba(255,255,255,0.06)] flex items-center justify-center"
+          >
+            <ArrowLeft className="w-[18px] h-[18px] text-white" />
+          </button>
+        </div>
+
+        <div className="flex-1 flex flex-col items-center justify-center px-6 relative z-10">
+          {/* Success ring animation */}
+          <div className="relative m-2">
+            <div className="w-[80px] h-[80px] rounded-full bg-gradient-to-br from-[#c9115f] to-[#cd620e] flex items-center justify-center shadow-[0_0_40px_rgba(201,17,95,0.6)]">
+              <Check className="w-[48px] h-[48px] text-white" strokeWidth={3} />
+            </div>
+            {/* Ripple rings */}
+            <div className="absolute inset-0 rounded-full border-2 border-[rgba(201,17,95,0.4)] animate-ping" />
+          </div>
+
+          <h1 className="text-white text-[26px] font-bold text-center mb-2">Booking Confirmed!</h1>
+          <p className="text-[#99A1AF] text-[14px] text-center mb-4">Your session has been successfully booked. Get ready to level up.</p>
+
+          {/* Booking card */}
+          <div className="w-full bg-[#111116] rounded-[20px] border border-[rgba(255,255,255,0.08)] p-5 mb-6">
+            <div className="flex items-center gap-3 mb-4 pb-4 border-b border-[rgba(255,255,255,0.07)]">
+              <div className="w-[48px] h-[48px] rounded-full bg-gradient-to-br from-[#c9115f] to-[#cd620e] flex items-center justify-center flex-shrink-0">
+                <span className="text-white text-[18px] font-bold">{coachName[0]}</span>
+              </div>
+              <div>
+                <p className="text-white text-[15px] font-bold">{coachName}</p>
+                <p className="text-[#99A1AF] text-[12px]">Technique Analysis · 60 min</p>
+              </div>
+            </div>
+            <div className="flex flex-col gap-2.5">
+              {[
+                { label: 'Date', value: 'June 17, 2026' },
+                { label: 'Time', value: '4:00 PM IST' },
+                { label: 'Mode', value: 'Video Call' },
+                { label: 'Booking ID', value: 'SF360-8471' },
+              ].map(({ label, value }) => (
+                <div key={label} className="flex items-center justify-between">
+                  <span className="text-[#99A1AF] text-[13px]">{label}</span>
+                  <span className="text-white text-[13px] font-semibold">{value}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Action buttons */}
+          <div className="w-full flex gap-2 mb-4">
+            <button className="flex px-2 gap-1.5 bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.1)] rounded-full py-3 flex items-center justify-center ">
+              <Calendar className="w-[15px] h-[15px] text-[#99A1AF]" />
+              <span className="text-[#99A1AF] text-[13px] font-semibold">Add to Calendar</span>
+            </button>
+            <button className="flex-1 bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.1)] rounded-full py-3 flex items-center justify-center gap-1.5">
+              <Share2 className="w-[15px] h-[15px] text-[#99A1AF]" />
+              <span className="text-[#99A1AF] text-[13px] font-semibold">Share</span>
+            </button>
+            <button className="flex-1 bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.1)] rounded-full py-3 flex items-center justify-center gap-1.5">
+              <Bookmark className="w-[15px] h-[15px] text-[#99A1AF]" />
+              <span className="text-[#99A1AF] text-[13px] font-semibold">Save</span>
+            </button>
+          </div>
+        </div>
+
+        {/* CTA */}
+        <div className="px-4 pb-28">
+          <button
+            onClick={() => navigate('/store/my-bookings')}
+            className="w-full bg-gradient-to-r from-[#c9115f] to-[#cd620e] rounded-full py-3.5 text-white text-[15px] font-bold shadow-[0_0_20px_rgba(201,17,95,0.5)]"
+          >
+            Go to My Bookings
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}

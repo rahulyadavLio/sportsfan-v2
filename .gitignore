@@ -1,0 +1,15 @@
+# Firebase
+backend/service-account.json
+backend/src/firebase/service-account.json
+
+# Env
+backend/.env
+frontend/.env
+
+# Node
+frontend/node_modules
+backend/node_modules
+
+# Build
+frontend/dist
+backend/dist
