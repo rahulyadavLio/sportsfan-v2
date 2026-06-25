@@ -1,17 +1,51 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ChevronDown, Calendar, MapPin, Award } from 'lucide-react';
-import { Category, RecordData } from '../RecordsExplorer';
-import { getRecordData } from '../utils/recordData';
+import { Category } from '../RecordsExplorer';
+import { useRecords } from '../../../hooks/useRecords';
 
 interface RecordCardsProps {
   event: string;
   category: Category;
 }
 
+function RecordCardSkeleton() {
+  return (
+    <div className="bg-[#15151c] rounded-2xl overflow-hidden border-2 border-[#1a1a1a] p-4 animate-pulse">
+      <div className="w-3 h-3 rounded-full bg-[#1a1a1a] mb-3" />
+      <div className="h-6 bg-[#1a1a1a] rounded mb-2 w-3/4" />
+      <div className="h-3 bg-[#1a1a1a] rounded w-full" />
+    </div>
+  );
+}
+
 export default function RecordCards({ event, category }: RecordCardsProps) {
   const [expandedCard, setExpandedCard] = useState<string | null>(null);
-  const records = getRecordData(event, category);
+  const { records, loading, error } = useRecords(event, category);
+
+  if (loading) {
+    return (
+      <section aria-labelledby="record-comparison-heading">
+        <h2 id="record-comparison-heading" className="text-sm font-semibold text-[#99a1af] mb-4 px-1 uppercase tracking-wide">Record Comparison</h2>
+        <div className="grid grid-cols-3 gap-3">
+          <RecordCardSkeleton />
+          <RecordCardSkeleton />
+          <RecordCardSkeleton />
+        </div>
+      </section>
+    );
+  }
+
+  if (error || records.length === 0) {
+    return (
+      <section aria-labelledby="record-comparison-heading">
+        <h2 id="record-comparison-heading" className="text-sm font-semibold text-[#99a1af] mb-4 px-1 uppercase tracking-wide">Record Comparison</h2>
+        <div className="bg-[#15151c] border-2 border-[#1a1a1a] rounded-2xl p-6 text-center">
+          <p className="text-sm text-[#99a1af]">No records found for {event} ({category})</p>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section aria-labelledby="record-comparison-heading">

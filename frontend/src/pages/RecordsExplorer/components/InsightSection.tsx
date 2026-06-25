@@ -1,7 +1,7 @@
 import { motion } from 'motion/react';
 import { Info, TrendingDown, Award } from 'lucide-react';
 import { Category } from '../RecordsExplorer';
-import { getRecordData } from '../utils/recordData';
+import { useRecordInsight } from '../../../hooks/useRecords';
 
 interface InsightSectionProps {
   event: string;
@@ -9,19 +9,30 @@ interface InsightSectionProps {
 }
 
 export default function InsightSection({ event, category }: InsightSectionProps) {
-  const records = getRecordData(event, category);
+  const { insight, loading } = useRecordInsight(event, category);
 
-  const national = records.find(r => r.type === 'National');
-  const world = records.find(r => r.type === 'World');
+  if (loading) {
+    return (
+      <div className="space-y-4 animate-pulse">
+        <div className="bg-[#15151c] border-2 border-[#1a1a1a] rounded-2xl p-6">
+          <div className="h-4 bg-[#1a1a1a] rounded w-3/4 mb-3" />
+          <div className="h-3 bg-[#1a1a1a] rounded w-full" />
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="bg-[#15151c] border-2 border-[#1a1a1a] rounded-2xl p-5">
+            <div className="h-8 bg-[#1a1a1a] rounded mb-2" />
+            <div className="h-3 bg-[#1a1a1a] rounded w-2/3" />
+          </div>
+          <div className="bg-[#15151c] border-2 border-[#1a1a1a] rounded-2xl p-5">
+            <div className="h-8 bg-[#1a1a1a] rounded mb-2" />
+            <div className="h-3 bg-[#1a1a1a] rounded w-2/3" />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
-  if (!national || !world) return null;
-
-  const diff = Math.abs(national.numericValue - world.numericValue);
-  const percentage = ((diff / world.numericValue) * 100).toFixed(1);
-
-  const isTimeEvent = event.includes('m') && !event.includes('Jump') && !event.includes('Throw') && !event.includes('Put');
-  const unit = isTimeEvent ? 's' : 'm';
-  const formattedDiff = `${diff.toFixed(2)}${unit}`;
+  if (!insight) return null;
 
   return (
     <motion.section
@@ -35,13 +46,15 @@ export default function InsightSection({ event, category }: InsightSectionProps)
       <h2 id="insights-heading" className="sr-only">Performance Insights</h2>
 
       {/* Main Insight */}
-      <div className="bg-[#15151c] border-2 border-[#1a1a1a] rounded-2xl p-6"
+      <div
+        className="bg-[#15151c] border-2 border-[#1a1a1a] rounded-2xl p-6"
         style={{ background: 'linear-gradient(137.15deg, rgba(201, 17, 95, 0.2) 0%, rgba(201, 17, 95, 0.05) 100%)' }}
         role="article"
         aria-labelledby="performance-gap-heading"
       >
         <div className="flex items-start gap-4">
-          <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0"
+          <div
+            className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0"
             style={{ background: 'linear-gradient(137.15deg, rgba(201, 17, 95, 0.3) 0%, rgba(201, 17, 95, 0.1) 100%)' }}
             aria-hidden="true"
           >
@@ -50,7 +63,8 @@ export default function InsightSection({ event, category }: InsightSectionProps)
           <div>
             <h3 id="performance-gap-heading" className="font-bold text-white mb-2 text-base tracking-[-0.015em]">Performance Gap</h3>
             <p className="text-white/90 text-sm leading-relaxed">
-              India is <strong className="text-[#C9115F] font-bold text-base">{formattedDiff}</strong> <span className="text-white/70">({percentage}%)</span> behind the world record.
+              India is <strong className="text-[#C9115F] font-bold text-base">{insight.formattedDiff}</strong>{' '}
+              <span className="text-white/70">({insight.percentage}%)</span> behind the world record.
             </p>
           </div>
         </div>
@@ -63,7 +77,9 @@ export default function InsightSection({ event, category }: InsightSectionProps)
             <TrendingDown className="w-5 h-5 text-[#C9115F]" aria-hidden="true" />
             <span className="text-xs text-[#99a1af] font-semibold uppercase tracking-wide">Gap Reduction</span>
           </div>
-          <p className="text-2xl font-bold text-white tracking-[-0.02em]" aria-label="25 percent">25%</p>
+          <p className="text-2xl font-bold text-white tracking-[-0.02em]" aria-label={`${insight.gapReductionPercent} percent`}>
+            {insight.gapReductionPercent}%
+          </p>
           <p className="text-xs text-[#99a1af] mt-2">Since 2015</p>
         </div>
 
@@ -72,7 +88,9 @@ export default function InsightSection({ event, category }: InsightSectionProps)
             <Award className="w-5 h-5 text-[#C9115F]" aria-hidden="true" />
             <span className="text-xs text-[#99a1af] font-semibold uppercase tracking-wide">Global Rank</span>
           </div>
-          <p className="text-2xl font-bold text-white tracking-[-0.02em]" aria-label="Number 25">#25</p>
+          <p className="text-2xl font-bold text-white tracking-[-0.02em]" aria-label={`Number ${insight.globalRank}`}>
+            #{insight.globalRank}
+          </p>
           <p className="text-xs text-[#99a1af] mt-2">In {event}</p>
         </div>
       </div>

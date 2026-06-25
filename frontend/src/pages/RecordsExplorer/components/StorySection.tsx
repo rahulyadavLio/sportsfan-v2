@@ -1,49 +1,51 @@
 import { motion } from 'motion/react';
-import { Trophy, TrendingUp, Award, Zap } from 'lucide-react';
+import { Trophy, TrendingUp, Award, Zap, LucideIcon } from 'lucide-react';
+import { useRecordStories } from '../../../hooks/useRecords';
+import { StoryEntry } from '../../../services/records.service';
 
 interface StorySectionProps {
-  onStorySelect: (story: string) => void;
+  onStorySelect: (story: StoryEntry) => void;
   event: string;
 }
 
-export default function StorySection({ onStorySelect, event }: StorySectionProps) {
-  const stories = [
-    {
-      id: 'fastest',
-      title: `India's Fastest ${event}`,
-      description: 'Journey behind the national record',
-      icon: Trophy,
-      gradient: 'linear-gradient(137.15deg, rgba(201, 17, 95, 0.2) 0%, rgba(201, 17, 95, 0.05) 100%)',
-    },
-    {
-      id: 'evolution',
-      title: 'Evolution of Records',
-      description: 'How sprint records have evolved',
-      icon: TrendingUp,
-      gradient: 'linear-gradient(137.15deg, rgba(192, 192, 192, 0.2) 0%, rgba(192, 192, 192, 0.05) 100%)',
-    },
-    {
-      id: 'milestones',
-      title: 'World Record Milestones',
-      description: 'Historic moments in athletics',
-      icon: Award,
-      gradient: 'linear-gradient(137.15deg, rgba(205, 98, 14, 0.2) 0%, rgba(205, 98, 14, 0.05) 100%)',
-    },
-    {
-      id: 'rising',
-      title: 'Rising Stars',
-      description: 'Young athletes breaking barriers',
-      icon: Zap,
-      gradient: 'linear-gradient(137.15deg, rgba(201, 17, 95, 0.2) 0%, rgba(201, 17, 95, 0.05) 100%)',
-    },
-  ];
+// Map story IDs to icons (icons cannot be stored in Firestore)
+const iconMap: Record<string, LucideIcon> = {
+  fastest: Trophy,
+  evolution: TrendingUp,
+  milestones: Award,
+  rising: Zap,
+};
+
+function getIcon(id: string): LucideIcon {
+  return iconMap[id] ?? Trophy;
+}
+
+export default function StorySection({ onStorySelect, event: _event }: StorySectionProps) {
+  const { stories, loading } = useRecordStories();
+
+  if (loading) {
+    return (
+      <section className="pt-4" aria-labelledby="stories-heading">
+        <h2 id="stories-heading" className="text-sm font-semibold text-[#99a1af] mb-4 px-1 uppercase tracking-wide">Featured Stories</h2>
+        <div className="flex gap-4 overflow-x-auto pb-3 -mx-4 px-4">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="flex-shrink-0 w-[260px] rounded-2xl p-6 min-h-[140px] bg-[#15151c] border-2 border-[#1a1a1a] animate-pulse">
+              <div className="w-7 h-7 bg-[#1a1a1a] rounded mb-4" />
+              <div className="h-4 bg-[#1a1a1a] rounded mb-2 w-3/4" />
+              <div className="h-3 bg-[#1a1a1a] rounded w-full" />
+            </div>
+          ))}
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="pt-4" aria-labelledby="stories-heading">
       <h2 id="stories-heading" className="text-sm font-semibold text-[#99a1af] mb-4 px-1 uppercase tracking-wide">Featured Stories</h2>
       <div className="flex gap-4 overflow-x-auto pb-3 snap-x snap-mandatory scrollbar-hide -mx-4 px-4" role="list" aria-label="Story cards">
         {stories.map((story, index) => {
-          const Icon = story.icon;
+          const Icon = getIcon(story.id);
           return (
             <motion.button
               key={story.id}
@@ -51,7 +53,7 @@ export default function StorySection({ onStorySelect, event }: StorySectionProps
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: index * 0.1 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => onStorySelect(story.title)}
+              onClick={() => onStorySelect(story)}
               aria-label={`Read story: ${story.title}. ${story.description}`}
               role="listitem"
               className="flex-shrink-0 w-[260px] rounded-2xl p-6 min-h-[140px] snap-start text-left hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-[#C9115F] focus:ring-offset-2 focus:ring-offset-[#0B0B0F] transition-all border-2 border-[#1a1a1a]"

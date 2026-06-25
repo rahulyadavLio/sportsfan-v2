@@ -2,6 +2,12 @@
 backend/service-account.json
 backend/src/firebase/service-account.json
 
+#data
+backend/src/data
+
+#scripts
+backend/src/scripts
+
 # Env
 backend/.env
 frontend/.env

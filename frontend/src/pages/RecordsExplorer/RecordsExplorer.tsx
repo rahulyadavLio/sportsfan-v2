@@ -11,6 +11,7 @@ import TrendsView from './components/TrendsView';
 import ProgressView from './components/ProgressView';
 import StorySection from './components/StorySection';
 import StoryBottomSheet from './components/StoryBottomSheet';
+import { StoryEntry } from '../../services/records.service';
 
 export type Category = 'Men' | 'Women';
 export type Discipline = 'Sprints' | 'Middle Distance' | 'Throws' | 'Jumps' | 'Relays';
@@ -33,7 +34,7 @@ export default function RecordsExplorer() {
   const [discipline, setDiscipline] = useState<Discipline>('Sprints');
   const [event, setEvent] = useState<string>('100m');
   const [viewMode, setViewMode] = useState<ViewMode>('Records');
-  const [selectedStory, setSelectedStory] = useState<string | null>(null);
+  const [selectedStory, setSelectedStory] = useState<StoryEntry | null>(null);
 
   return (
     <div
@@ -138,7 +139,7 @@ export default function RecordsExplorer() {
         <StoryBottomSheet
           isOpen={!!selectedStory}
           onClose={() => setSelectedStory(null)}
-          storyTitle={selectedStory || ''}
+          story={selectedStory}
         />
       </div>
     </div>
