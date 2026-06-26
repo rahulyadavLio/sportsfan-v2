@@ -50,6 +50,12 @@ export interface RecordInsight {
   percentage: string;
   formattedDiff: string;
   unit: string;
+  /** Percentage of gap closed since the baseline year (negative = widening) */
   gapReductionPercent: string;
-  globalRank: number;
+  /** Confirmed World Athletics live ranking, or 'N/A' if not verifiable */
+  globalRank: string;
+  /** Trend direction from the Gap Analysis sheet */
+  trendDirection: string;
+  /** Year from which gap reduction is measured */
+  baselineYear: string;
 }

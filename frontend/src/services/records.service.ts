@@ -46,7 +46,10 @@ export interface RecordInsight {
   formattedDiff: string;
   unit: string;
   gapReductionPercent: string;
-  globalRank: number;
+  /** Confirmed World Athletics live ranking, or 'N/A' */
+  globalRank: string;
+  trendDirection: string;
+  baselineYear: string;
 }
 
 export interface StoryEntry {

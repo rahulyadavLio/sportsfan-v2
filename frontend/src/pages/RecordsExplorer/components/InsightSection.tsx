@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { Info, TrendingDown, Award } from 'lucide-react';
+import { Info, TrendingDown, TrendingUp, Minus, Award } from 'lucide-react';
 import { Category } from '../RecordsExplorer';
 import { useRecordInsight } from '../../../hooks/useRecords';
 
@@ -8,8 +8,20 @@ interface InsightSectionProps {
   category: Category;
 }
 
+/** Human-readable labels for event keys — same map as FilterPanel */
+const eventLabels: Record<string, string> = {
+  '100m': '100m', '200m': '200m', '400m': '400m', '400mH': '400m Hurdles',
+  '800m': '800m', '1500m': '1500m', '3000m': '3000m', '5000m': '5000m',
+  ShotPut: 'Shot Put', DiscusThrow: 'Discus Throw',
+  JavelinThrow: 'Javelin Throw', HammerThrow: 'Hammer Throw',
+  HighJump: 'High Jump', LongJump: 'Long Jump',
+  TripleJump: 'Triple Jump', PoleVault: 'Pole Vault',
+  '4x100m': '4×100m', '4x400m': '4×400m',
+};
+
 export default function InsightSection({ event, category }: InsightSectionProps) {
   const { insight, loading } = useRecordInsight(event, category);
+  const eventLabel = eventLabels[event] ?? event;
 
   if (loading) {
     return (
@@ -34,6 +46,22 @@ export default function InsightSection({ event, category }: InsightSectionProps)
 
   if (!insight) return null;
 
+  // ── Gap-reduction display logic ──────────────────────────────────────────
+  const gapNum = parseFloat(insight.gapReductionPercent);
+  const isNarrowing = gapNum > 0;
+  const isWidening = gapNum < 0;
+  const isFlat = gapNum === 0;
+
+  const TrendIcon = isNarrowing ? TrendingDown : isWidening ? TrendingUp : Minus;
+  const trendColor = isNarrowing ? '#22c55e' : isWidening ? '#ef4444' : '#99a1af';
+  const gapDisplay = isWidening
+    ? `+${Math.abs(gapNum).toFixed(1)}%` // widening → gap is growing
+    : `${Math.abs(gapNum).toFixed(1)}%`;
+  const gapLabel = isNarrowing ? 'Reduction' : isWidening ? 'Widening' : 'No Change';
+
+  // ── Global rank display ───────────────────────────────────────────────────
+  const hasRank = insight.globalRank !== 'N/A';
+
   return (
     <motion.section
       key={`${event}-${category}-insight`}
@@ -45,7 +73,7 @@ export default function InsightSection({ event, category }: InsightSectionProps)
     >
       <h2 id="insights-heading" className="sr-only">Performance Insights</h2>
 
-      {/* Main Insight */}
+      {/* Main Insight — Performance Gap */}
       <div
         className="bg-[#15151c] border-2 border-[#1a1a1a] rounded-2xl p-6"
         style={{ background: 'linear-gradient(137.15deg, rgba(201, 17, 95, 0.2) 0%, rgba(201, 17, 95, 0.05) 100%)' }}
@@ -66,33 +94,68 @@ export default function InsightSection({ event, category }: InsightSectionProps)
               India is <strong className="text-[#C9115F] font-bold text-base">{insight.formattedDiff}</strong>{' '}
               <span className="text-white/70">({insight.percentage}%)</span> behind the world record.
             </p>
+            {insight.trendDirection && (
+              <p className="text-xs text-[#99a1af] mt-2 leading-relaxed">
+                Trend: <span className="font-semibold text-white/80">{insight.trendDirection}</span>
+              </p>
+            )}
           </div>
         </div>
       </div>
 
       {/* Additional Insights */}
       <div className="grid grid-cols-2 gap-4" role="list" aria-label="Additional statistics">
+
+        {/* Gap Reduction */}
         <div className="bg-[#15151c] border-2 border-[#1a1a1a] rounded-2xl p-5" role="listitem">
           <div className="flex items-center gap-2 mb-3">
-            <TrendingDown className="w-5 h-5 text-[#C9115F]" aria-hidden="true" />
-            <span className="text-xs text-[#99a1af] font-semibold uppercase tracking-wide">Gap Reduction</span>
+            <TrendIcon className="w-5 h-5" style={{ color: trendColor }} aria-hidden="true" />
+            <span className="text-xs text-[#99a1af] font-semibold uppercase tracking-wide">Gap {gapLabel}</span>
           </div>
-          <p className="text-2xl font-bold text-white tracking-[-0.02em]" aria-label={`${insight.gapReductionPercent} percent`}>
-            {insight.gapReductionPercent}%
+
+          {isFlat ? (
+            <p className="text-2xl font-bold tracking-[-0.02em]" style={{ color: trendColor }} aria-label="No change">
+              —
+            </p>
+          ) : (
+            <p
+              className="text-2xl font-bold tracking-[-0.02em]"
+              style={{ color: trendColor }}
+              aria-label={`${gapDisplay} gap ${gapLabel.toLowerCase()}`}
+            >
+              {gapDisplay}
+            </p>
+          )}
+
+          <p className="text-xs text-[#99a1af] mt-2">
+            {isFlat
+              ? 'No change since ' + insight.baselineYear
+              : `Since ${insight.baselineYear}`}
           </p>
-          <p className="text-xs text-[#99a1af] mt-2">Since 2015</p>
         </div>
 
+        {/* Global Rank */}
         <div className="bg-[#15151c] border-2 border-[#1a1a1a] rounded-2xl p-5" role="listitem">
           <div className="flex items-center gap-2 mb-3">
             <Award className="w-5 h-5 text-[#C9115F]" aria-hidden="true" />
-            <span className="text-xs text-[#99a1af] font-semibold uppercase tracking-wide">Global Rank</span>
+            <span className="text-xs text-[#99a1af] font-semibold uppercase tracking-wide">
+              {hasRank ? 'World Rank' : 'Global Rank'}
+            </span>
           </div>
-          <p className="text-2xl font-bold text-white tracking-[-0.02em]" aria-label={`Number ${insight.globalRank}`}>
-            #{insight.globalRank}
+
+          <p
+            className="text-2xl font-bold tracking-[-0.02em]"
+            style={{ color: hasRank ? '#C9115F' : '#99a1af' }}
+            aria-label={hasRank ? `World rank ${insight.globalRank}` : 'Not available'}
+          >
+            {insight.globalRank}
           </p>
-          <p className="text-xs text-[#99a1af] mt-2">In {event}</p>
+
+          <p className="text-xs text-[#99a1af] mt-2">
+            {hasRank ? `In ${eventLabel}` : 'Not confirmed'}
+          </p>
         </div>
+
       </div>
     </motion.section>
   );
