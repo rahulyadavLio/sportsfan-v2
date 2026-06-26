@@ -1,15 +1,46 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
+import type { PlaybookWeek } from "@/types/playbook";
+
 import TimelineView from '@/components/charts/TimelineView';
-import AgendaView from '@/components/charts/AgendaView';
 import CalendarView from '@/components/charts/CalendarView';
+import AgendaView from '@/components/charts/AgendaView';
+
+import { playbookService } from '@/services/playbook.service';
 
 type TabType = 'timeline' | 'calendar' | 'agenda';
 
+
 export default function Playbook() {
 
-  const [activeTab, setActiveTab] = useState<TabType>('timeline');
   const navigate = useNavigate();
+
+  const [activeTab, setActiveTab] = useState<TabType>('timeline');
+  const [playbook, setPlaybook] = useState<PlaybookWeek[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const data = await playbookService.getAll();
+        console.log("Playbook API:", data);
+        setPlaybook(data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    load();
+  }, []);
+  if (loading) {
+    return (
+      <div className="h-screen bg-black flex items-center justify-center">
+        Loading...
+      </div>
+    );
+  }
 
   return (
     <div className="bg-black h-screen w-full flex justify-center">
@@ -77,10 +108,26 @@ export default function Playbook() {
         <div
           className="overflow-y-auto"
           style={{ paddingTop: '132px', height: '100vh' }}
-        >
-          {activeTab === 'timeline' && <TimelineView onNavigate={navigate} />}
-          {activeTab === 'calendar' && <CalendarView onNavigate={navigate} />}
-          {activeTab === 'agenda' && <AgendaView onNavigate={navigate} />}
+        >{activeTab === 'timeline' && (
+          <TimelineView
+            playbook={playbook}
+            onNavigate={navigate}
+          />
+        )}
+
+          {activeTab === 'calendar' && (
+            <CalendarView
+              playbook={playbook}
+              onNavigate={navigate}
+            />
+          )}
+
+          {activeTab === 'agenda' && (
+            <AgendaView
+              playbook={playbook}
+              onNavigate={navigate}
+            />
+          )}
         </div>
       </div>
     </div>

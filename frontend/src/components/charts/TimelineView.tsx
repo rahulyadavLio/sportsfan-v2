@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { ChevronDown, ChevronUp, Headphones, Play, FileText, Zap } from 'lucide-react';
+import type { PlaybookWeek } from '@/types/playbook';
 
 interface Drop {
   id: string;
@@ -19,54 +20,54 @@ interface Week {
   drops: Drop[];
 }
 
-const weeks: Week[] = [
-  {
-    week: 1,
-    label: 'Week 1',
-    dateRange: 'Mar 1 – Mar 7',
-    theme: 'Foundation',
-    drops: [
-      { id: 'w1-1', type: 'Audio', title: "Tejaswin shankar on qualifing for CWG 2026", date: '2 day ago', path: '/audio/1' },
-      { id: 'w1-2', type: 'Video', title: 'Praveen Chithravel on CWG 2026', meta: '1 day ago', date: 'Mar 3', path: '/video/5' },
-      { id: 'w1-3', type: 'Article', title: 'Team India Squad Announced', meta: '5 min read', date: '18 min ago', path: '/articles/1' },
-    ],
-  },
-  {
-    week: 2,
-    label: 'Week 2',
-    dateRange: 'Mar 8 – Mar 14',
-    theme: 'Qualification',
-    drops: [
-      { id: 'w2-1', type: 'Article', title: '2 Indian Javelin Stars Qualify for CWG', meta: '4 min read', date: 'Mar 8' },
-      { id: 'w2-2', type: 'Video', title: 'Top 5 Athletics Events to Watch at CWG 2026', meta: '6 min', date: 'Mar 10' },
-      { id: 'w2-3', type: 'Audio', title: 'Road to Glasgow: Athlete Expectations', meta: '9 min', date: 'Mar 12' },
-    ],
-  },
-  {
-    week: 3,
-    label: 'Week 3',
-    dateRange: 'Mar 15 – Mar 21',
-    theme: 'Countdown',
-    drops: [
-      { id: 'w3-1', type: 'Article', title: 'Everything You Need to Know About CWG Athletics', meta: '7 min read', date: 'Mar 15' },
-      { id: 'w3-2', type: 'Video', title: "Meet Team India's Biggest Medal Hopes", meta: '8 min', date: 'Mar 17' },
-      { id: 'w3-3', type: 'Audio', title: 'Inside Team India Before Glasgow', meta: '10 min', date: 'Mar 19' },
-      { id: 'w3-4', type: 'Article', title: 'Glasgow Venues & Competition Schedule', meta: '5 min read', date: 'Mar 21' },
-    ],
-  },
-  {
-    week: 4,
-    label: 'Week 4',
-    dateRange: 'Mar 22 – Mar 28',
-    theme: 'Game Time',
-    drops: [
-      { id: 'w4-1', type: 'Video', title: 'CWG 2026 Opening Ceremony Highlights', meta: '11 min', date: 'Mar 22' },
-      { id: 'w4-2', type: 'Article', title: 'Day 1 Athletics: Results & Biggest Moments', meta: '5 min read', date: 'Mar 24' },
-      { id: 'w4-3', type: 'Audio', title: 'Athletes React After Their Performances', meta: '12 min', date: 'Mar 26' },
-      { id: 'w4-4', type: 'Video', title: 'Best Moments from CWG 2026 Athletics', meta: '9 min', date: 'Mar 28' },
-    ],
-  },
-];
+// const weeks: Week[] = [
+//   {
+//     week: 1,
+//     label: 'Week 1',
+//     dateRange: 'Mar 1 – Mar 7',
+//     theme: 'Foundation',
+//     drops: [
+//       { id: 'w1-1', type: 'Audio', title: "Tejaswin shankar on qualifing for CWG 2026", date: '2 day ago', path: '/audio/1' },
+//       { id: 'w1-2', type: 'Video', title: 'Praveen Chithravel on CWG 2026', meta: '1 day ago', date: 'Mar 3', path: '/video/5' },
+//       { id: 'w1-3', type: 'Article', title: 'Team India Squad Announced', meta: '5 min read', date: '18 min ago', path: '/articles/1' },
+//     ],
+//   },
+//   {
+//     week: 2,
+//     label: 'Week 2',
+//     dateRange: 'Mar 8 – Mar 14',
+//     theme: 'Qualification',
+//     drops: [
+//       { id: 'w2-1', type: 'Article', title: '2 Indian Javelin Stars Qualify for CWG', meta: '4 min read', date: 'Mar 8' },
+//       { id: 'w2-2', type: 'Video', title: 'Top 5 Athletics Events to Watch at CWG 2026', meta: '6 min', date: 'Mar 10' },
+//       { id: 'w2-3', type: 'Audio', title: 'Road to Glasgow: Athlete Expectations', meta: '9 min', date: 'Mar 12' },
+//     ],
+//   },
+//   {
+//     week: 3,
+//     label: 'Week 3',
+//     dateRange: 'Mar 15 – Mar 21',
+//     theme: 'Countdown',
+//     drops: [
+//       { id: 'w3-1', type: 'Article', title: 'Everything You Need to Know About CWG Athletics', meta: '7 min read', date: 'Mar 15' },
+//       { id: 'w3-2', type: 'Video', title: "Meet Team India's Biggest Medal Hopes", meta: '8 min', date: 'Mar 17' },
+//       { id: 'w3-3', type: 'Audio', title: 'Inside Team India Before Glasgow', meta: '10 min', date: 'Mar 19' },
+//       { id: 'w3-4', type: 'Article', title: 'Glasgow Venues & Competition Schedule', meta: '5 min read', date: 'Mar 21' },
+//     ],
+//   },
+//   {
+//     week: 4,
+//     label: 'Week 4',
+//     dateRange: 'Mar 22 – Mar 28',
+//     theme: 'Game Time',
+//     drops: [
+//       { id: 'w4-1', type: 'Video', title: 'CWG 2026 Opening Ceremony Highlights', meta: '11 min', date: 'Mar 22' },
+//       { id: 'w4-2', type: 'Article', title: 'Day 1 Athletics: Results & Biggest Moments', meta: '5 min read', date: 'Mar 24' },
+//       { id: 'w4-3', type: 'Audio', title: 'Athletes React After Their Performances', meta: '12 min', date: 'Mar 26' },
+//       { id: 'w4-4', type: 'Video', title: 'Best Moments from CWG 2026 Athletics', meta: '9 min', date: 'Mar 28' },
+//     ],
+//   },
+// ];
 
 const weekTypeConfig: Record<number, Record<'Audio' | 'Video' | 'Article', {
   icon: typeof Headphones | typeof Play | typeof FileText;
@@ -95,13 +96,18 @@ const weekTypeConfig: Record<number, Record<'Audio' | 'Video' | 'Article', {
   },
 };
 
+
 interface Props {
+  playbook: PlaybookWeek[];
   onNavigate: (path: string) => void;
 }
 
-export default function TimelineView({ onNavigate }: Props) {
+export default function TimelineView({
+  playbook,
+  onNavigate,
+}: Props) {
   const [openWeeks, setOpenWeeks] = useState<Set<number>>(new Set([1]));
-
+  console.log("Timeline", playbook);
   const toggleWeek = (week: number) => {
     setOpenWeeks((prev) => {
       const next = new Set(prev);
@@ -113,7 +119,7 @@ export default function TimelineView({ onNavigate }: Props) {
 
   return (
     <div className="w-full px-4 py-4 space-y-4">
-      {weeks.map((w) => {
+      {playbook.map((w) => {
         const isOpen = openWeeks.has(w.week);
         const typeConfig = weekTypeConfig[w.week];
         return (
