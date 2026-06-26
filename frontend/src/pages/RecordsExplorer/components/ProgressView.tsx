@@ -9,15 +9,29 @@ interface ProgressViewProps {
   category: Category;
 }
 
+/** Human-readable labels for event keys, matching FilterPanel */
+const eventLabels: Record<string, string> = {
+  '100m': '100m', '200m': '200m', '400m': '400m', '400mH': '400m Hurdles',
+  '800m': '800m', '1500m': '1500m', '3000m': '3000m', '5000m': '5000m',
+  ShotPut: 'Shot Put', DiscusThrow: 'Discus Throw',
+  JavelinThrow: 'Javelin Throw', HammerThrow: 'Hammer Throw',
+  HighJump: 'High Jump', LongJump: 'Long Jump',
+  TripleJump: 'Triple Jump', PoleVault: 'Pole Vault',
+  '4x100m': '4×100m', '4x400m': '4×400m',
+};
+
 export default function ProgressView({ event, category: _category }: ProgressViewProps) {
   const { progress, loading, error } = useRecordProgress(event);
   const { gapData, milestones } = progress;
+
+  const eventLabel = eventLabels[event] ?? event;
 
   const isTimeEvent =
     event.includes('m') &&
     !event.includes('Jump') &&
     !event.includes('Throw') &&
-    !event.includes('Put');
+    !event.includes('Put') &&
+    !event.includes('Vault');
   const gapUnit = isTimeEvent ? 's' : 'm';
 
   const improvementRate =
@@ -44,7 +58,7 @@ export default function ProgressView({ event, category: _category }: ProgressVie
           <div className="w-full h-64 bg-[#0B0B0F] rounded-xl animate-pulse" />
         ) : error || gapData.length === 0 ? (
           <div className="w-full h-64 flex items-center justify-center">
-            <p className="text-sm text-[#99a1af]">No progress data available for {event}</p>
+            <p className="text-sm text-[#99a1af]">No progress data available for {eventLabel}</p>
           </div>
         ) : (
           <div className="w-full h-64" role="img" aria-label="Bar chart showing the gap to world record demonstrating progress over time">
@@ -110,7 +124,7 @@ export default function ProgressView({ event, category: _category }: ProgressVie
                 ) : (
                   'Tracking progress over time.'
                 )}{' '}
-                India is making steady progress in {event}.
+                India is making steady progress in {eventLabel}.
               </p>
             )}
           </div>
