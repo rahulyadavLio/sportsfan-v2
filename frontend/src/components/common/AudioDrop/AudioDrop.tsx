@@ -53,17 +53,17 @@ export interface AudioDropData {
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
 export const audioDropsData: Record<string, AudioDropData> = {
-  "1": {
+
+  "tejaswin-shankar": {
     badgeLabel: "QUALIFICATION UPDATE",
     episode: "EP 01",
-    heroImage: "/audio_1.webp",
+    heroImage: "/audio_1.webp", // TODO: confirm/update hero image
 
-    title: "Tejaswin Shankar on CWG & Asian Games Qualification",
+    title: "Decathlon's Renaissance Man 🎧",
     subtitle: "Balancing the Decathlon and High Jump on the road to major championships",
 
     descriptionParagraphs: [
       "In this exclusive conversation, Indian athletics star Tejaswin Shankar shares his journey towards qualifying for both the Commonwealth Games and the Asian Games. As one of India's most versatile athletes, he explains what it takes to compete in the demanding decathlon while continuing to perform at the highest level in the high jump.",
-
       "Tejaswin discusses his preparation, competition schedule, and the importance of consistency during the qualification period. He reflects on the pride of representing India, the challenges of balancing two elite events, and his determination to secure qualification for both international championships."
     ],
 
@@ -83,124 +83,247 @@ export const audioDropsData: Record<string, AudioDropData> = {
     recordedDate: "July 2025",
     location: "AFI Media Interaction",
 
-    listeningCount: "2.3k listening",
+    listeningCount: "2.3k listening", // TODO: update count
     trendingLabel: "Trending #1",
     categoryLabel: "Qualification Update",
 
-    totalDuration: "08:20",
+    totalDuration: "08:20", // TODO: confirm actual duration of new audio
 
     audioUrl:
-      "https://res.cloudinary.com/dflnsufit/video/upload/v1782111513/Tejaswin_Shankar_speaks_about_qualifying_for_CWG_and_Asian_Games_in_Decathlon_and_high_jump_hiz15z.mp3",
+      "https://res.cloudinary.com/dflnsufit/video/upload/v1782725153/TJ_wins_silver_in_the_decathlon_with_7618_points_asianathletics2025_asianathleticschampionships_-_N1_Media_Consultancy_Private_Limited_youtube_hbiqgv.mp3",
   },
 
+  "gurindervir-singh": {
+    badgeLabel: "ATHLETE SPEAKS",
+    episode: "EP 02",
+    heroImage: "/audio_2.webp", // TODO: add hero image
 
-  "2": {
-    badgeLabel: "TECHNIQUE BREAKDOWN",
-    episode: "EP 01",
-    heroImage: "/audio-2.jpg",
+    title: "Mental Toughness: Gurindervir Speaks 🎧",
+    subtitle: "On focus, pressure, and chasing speed at the highest level", // TODO: update subtitle
 
-    title: "Technique Breakdown",
-    subtitle: "Neeraj Chopra on mastering the javelin throw",
     descriptionParagraphs: [
-      "Join Neeraj Chopra as he breaks down the science behind a world-class javelin throw. From the approach run and body positioning to grip, release angle, and follow-through, he explains how every movement contributes to achieving maximum distance.",
-      "Drawing from years of international competition, Neeraj shares the techniques, discipline, and mental focus that have helped him succeed on the biggest stages, including the Commonwealth Games. Whether you're an aspiring athlete or simply a fan of athletics, this episode offers a rare look into the craft behind every throw."
+      "Gurindervir Singh opens up about the mental side of sprinting at the elite level — how he stays focused under pressure, manages expectations, and keeps pushing the limits of Indian sprinting.", // TODO: refine
     ],
-    keyMoments: [
-      { timestamp: "02:14", label: "Building the perfect run-up" },
-      { timestamp: "06:28", label: "Grip, release & timing" },
-      { timestamp: "10:56", label: "Mindset of a champion" },
-    ],
-    chaptersLabel: "3 chapters",
-    quote: "A great throw is built on rhythm, balance, and trust in your technique.",
-    quoteAttribution: "— Neeraj Chopra",
-    recordedDate: "May 2026",
-    location: "CWG Media Studio",
-    listeningCount: "2.6k listening",
-    trendingLabel: "Trending #1",
-    categoryLabel: "Technique",
-    totalDuration: "14:30",
-    audioUrl: "https://res.cloudinary.com/dflnsufit/video/upload/v1781888619/neeraj_pgoa3r.mp3",
-  },
-  "3": {
-    badgeLabel: "ATHLETE INSIGHTS",
-    episode: "EP 01",
-    heroImage: "/audio-3.jpg",
 
-    title: "Parul on Endurance, Discipline",
-    subtitle: "Parul Choudhary on the mindset behind distance running",
-    descriptionParagraphs: [
-      "Indian middle and long-distance runner Parul Choudhary shares what it takes to compete at the highest level, revealing how endurance is built through consistent training, patience, and unwavering discipline. She reflects on the daily habits that prepare her for major championships, including the Commonwealth Games.",
-      "From balancing intense training sessions to staying mentally strong through setbacks, Parul offers a behind-the-scenes look at the dedication required to excel in distance running. Her journey is a reminder that success isn't built overnight—it's earned one step, one session, and one race at a time."
-    ],
     keyMoments: [
-      { timestamp: "02:08", label: "Building endurance over time" },
-      { timestamp: "06:42", label: "Discipline beyond the track" },
-      { timestamp: "11:15", label: "Preparing for the Commonwealth Games" },
+      { timestamp: "00:00", label: "On mental toughness" }, // TODO: update timestamps
     ],
-    chaptersLabel: "3 chapters",
-    quote: "Every training session adds up. Consistency is what turns effort into achievement.",
-    quoteAttribution: "— Parul Choudhary",
-    recordedDate: "May 2026",
-    location: "CWG Media Studio",
-    listeningCount: "2.1k listening",
-    trendingLabel: "Trending #3",
-    categoryLabel: "Athlete Insights",
-    totalDuration: "13:45",
-    audioUrl: "https://res.cloudinary.com/dflnsufit/video/upload/v1781888620/parul1_ucwqw4.mp3",
-  },
-  "4": {
-    badgeLabel: "RECORD BREAKDOWN",
-    episode: "EP 01",
-    heroImage: "/audio-4.jpeg",
 
-    title: "Take on Breaking Records & Training",
-    subtitle: "Gurindervir Singh on speed, discipline, and chasing new milestones",
-    descriptionParagraphs: [
-      "India's fastest man, Gurindervir Singh, shares the journey behind breaking national records and the relentless training required to perform at the highest level. He discusses how speed is developed through consistency, technical precision, and years of focused preparation leading into major competitions like the Commonwealth Games.",
-      "From explosive sprint sessions and recovery routines to handling expectations after record-breaking performances, Gurindervir offers an inside look at the mindset needed to keep improving. His story highlights the balance between physical preparation, mental resilience, and the constant pursuit of faster times."
-    ],
-    keyMoments: [
-      { timestamp: "02:20", label: "Journey to breaking records" },
-      { timestamp: "06:15", label: "Training for explosive speed" },
-      { timestamp: "11:08", label: "Goals for the Commonwealth Games" },
-    ],
-    chaptersLabel: "3 chapters",
-    quote: "Every record is just another starting line for the next challenge.",
+    chaptersLabel: "1 chapter", // TODO: update
+
+    quote: "", // TODO: add quote
     quoteAttribution: "— Gurindervir Singh",
-    recordedDate: "May 2026",
-    location: "CWG Media Studio",
-    listeningCount: "2.3k listening",
-    trendingLabel: "Trending #2",
-    categoryLabel: "Record Breakdown",
-    totalDuration: "14:05",
-    audioUrl: "https://res.cloudinary.com/dflnsufit/video/upload/v1781888507/Gurindervir_Singh_lxh8ql.mp3",
-  },
-  "5": {
-    badgeLabel: "ASIAN GAMES UPDATE",
-    episode: "EP 01",
-    heroImage: "/afi-logo.jpeg",
 
-    title: "Asian Games Qualification Explained",
-    subtitle: "Dr. Adille J. Sumariwalla on qualification pathways and athlete preparation",
+    recordedDate: "", // TODO
+    location: "", // TODO
+
+    listeningCount: "0 listening", // TODO
+    trendingLabel: "",
+    categoryLabel: "Athlete Speaks",
+
+    totalDuration: "00:00", // TODO
+
+    audioUrl:
+      "https://res.cloudinary.com/dflnsufit/video/upload/v1782724656/126052400194-1779604741591_fdrxga.mp3",
+  },
+
+  "murali-sreeshankar": {
+    badgeLabel: "ATHLETE SPEAKS",
+    episode: "EP 03",
+    heroImage: "/audio_3.webp", // TODO: add hero image
+
+    title: "The Long Jump Comeback 🎧",
+    subtitle: "Murali Sreeshankar on his road back to the podium", // TODO: update subtitle
+
     descriptionParagraphs: [
-      "Athletics Federation of India President Dr. Adille J. Sumariwalla explains the qualification process for the Asian Games, providing clarity on selection standards, eligibility criteria, and the pathway athletes must follow to earn their place on Team India. He also discusses how qualification benchmarks help identify the country's strongest performers for international competition.",
-      "In this insightful conversation, Dr. Sumariwalla also shares his perspective on athlete development, long-term planning, and India's preparations for upcoming multi-sport events. The episode offers fans a deeper understanding of how national teams are built and what it takes to compete at the highest level."
+      "Murali Sreeshankar reflects on his comeback journey in long jump, sharing insights from the Asian Games 2023 medal ceremony and the road that led him back to competing at the top level.", // TODO: refine
     ],
+
     keyMoments: [
-      { timestamp: "02:12", label: "Qualification criteria explained" },
-      { timestamp: "06:48", label: "Selection standards & process" },
-      { timestamp: "11:20", label: "Preparing Team India" },
+      { timestamp: "00:00", label: "On the comeback journey" }, // TODO
     ],
-    chaptersLabel: "3 chapters",
-    quote: "Selection isn't just about one performance—it's about consistency, preparation, and meeting international standards.",
-    quoteAttribution: "— Dr. Adille J. Sumariwalla",
-    recordedDate: "May 2026",
-    location: "AFI Media Studio",
-    listeningCount: "1.9k listening",
-    trendingLabel: "Trending #4",
-    categoryLabel: "Asian Games",
-    totalDuration: "13:20",
-    audioUrl: "https://res.cloudinary.com/dflnsufit/video/upload/v1781931537/audio_vocals_5_ltb0gt.mp3",
+
+    chaptersLabel: "1 chapter", // TODO
+
+    quote: "", // TODO
+    quoteAttribution: "— Murali Sreeshankar",
+
+    recordedDate: "", // TODO
+    location: "Asian Games 2023", // TODO: confirm
+
+    listeningCount: "0 listening", // TODO
+    trendingLabel: "",
+    categoryLabel: "Athlete Speaks",
+
+    totalDuration: "00:00", // TODO
+
+    audioUrl:
+      "https://res.cloudinary.com/dflnsufit/video/upload/v1782724754/Exclusive_Interview_Murali_Sreeshankar_Men_s_Long_Jump_Medal_Ceremony_Asian_Games_2023_-_Times_Of_India_youtube_t7jnrc.mp3",
+  },
+
+  "neeraj-chopra": {
+    badgeLabel: "ATHLETE SPEAKS",
+    episode: "EP 04",
+    heroImage: "/audio_4.webp", // TODO: add hero image
+
+    title: "India's Golden Arm: Tokyo to 90m 🎧",
+    subtitle: "Neeraj Chopra on the throw that changed Indian athletics forever", // TODO: update subtitle
+
+    descriptionParagraphs: [
+      "Neeraj Chopra revisits the historic gold-winning throw at Tokyo 2020 and his journey since then toward breaking the 90m barrier, reflecting on what that moment meant for Indian sport.", // TODO: refine
+    ],
+
+    keyMoments: [
+      { timestamp: "00:00", label: "Revisiting the Tokyo throw" }, // TODO
+    ],
+
+    chaptersLabel: "1 chapter", // TODO
+
+    quote: "", // TODO
+    quoteAttribution: "— Neeraj Chopra",
+
+    recordedDate: "", // TODO
+    location: "Tokyo 2020 Olympics", // TODO: confirm
+
+    listeningCount: "0 listening", // TODO
+    trendingLabel: "Trending #1", // since he's the headline athlete
+
+    categoryLabel: "Athlete Speaks",
+
+    totalDuration: "00:00", // TODO
+
+    audioUrl:
+      "https://res.cloudinary.com/dflnsufit/video/upload/v1782724872/Neeraj_Chopra_s_gold-winning_throw_Tokyo2020_Highlights_-_Olympics_youtube_u5qn38.mp3",
+  },
+
+  "parul-chaudhary": {
+    badgeLabel: "ATHLETE SPEAKS",
+    episode: "EP 05",
+    heroImage: "/audio_5.webp", // TODO: add hero image
+
+    title: "India's Steeplechase Queen 🎧",
+    subtitle: "Parul Chaudhary on rewriting India's distance running record books", // TODO: update subtitle
+
+    descriptionParagraphs: [
+      "Audio coming soon — Parul Chaudhary's journey as India's leading steeplechase and distance running star.", // TODO: replace once audio is available
+    ],
+
+    keyMoments: [],
+
+    chaptersLabel: "0 chapters",
+
+    quote: "", // TODO
+    quoteAttribution: "— Parul Chaudhary",
+
+    recordedDate: "", // TODO
+    location: "", // TODO
+
+    listeningCount: "0 listening",
+    trendingLabel: "",
+    categoryLabel: "Athlete Speaks",
+
+    totalDuration: "00:00",
+
+    audioUrl: "", // TODO: audio missing — link provided was a video file (tweeload_0huh67l9_gzq2dy.mp4), not audio
+  },
+
+  "pooja-singh": {
+    badgeLabel: "ATHLETE SPEAKS",
+    episode: "EP 06",
+    heroImage: "/audio_6.webp", // TODO: add hero image
+
+    title: "Pooja Singh's Story 🎧", // TODO: update title once available
+    subtitle: "", // TODO
+
+    descriptionParagraphs: [
+      "Audio coming soon — Pooja Singh's journey in Indian athletics.", // TODO
+    ],
+
+    keyMoments: [],
+
+    chaptersLabel: "0 chapters",
+
+    quote: "",
+    quoteAttribution: "— Pooja Singh",
+
+    recordedDate: "",
+    location: "",
+
+    listeningCount: "0 listening",
+    trendingLabel: "",
+    categoryLabel: "Athlete Speaks",
+
+    totalDuration: "00:00",
+
+    audioUrl: "", // TODO: audio missing
+  },
+
+  "sarvesh-kushare": {
+    badgeLabel: "ATHLETE SPEAKS",
+    episode: "EP 07",
+    heroImage: "/audio_7.webp", // TODO: add hero image
+
+    title: "India's High Jump History Maker 🎧",
+    subtitle: "Sarvesh Kushare on reaching the World Championships final", // TODO: update subtitle
+
+    descriptionParagraphs: [
+      "Sarvesh Kushare speaks exclusively after becoming one of the few Indian high jumpers to reach a World Championships final, reflecting on his journey and what the achievement means for Indian athletics.", // TODO: refine
+    ],
+
+    keyMoments: [
+      { timestamp: "00:00", label: "Reaching the World Championships final" }, // TODO
+    ],
+
+    chaptersLabel: "1 chapter", // TODO
+
+    quote: "", // TODO
+    quoteAttribution: "— Sarvesh Kushare",
+
+    recordedDate: "", // TODO
+    location: "World Championships", // TODO: confirm
+
+    listeningCount: "0 listening", // TODO
+    trendingLabel: "",
+    categoryLabel: "Athlete Speaks",
+
+    totalDuration: "00:00", // TODO
+
+    audioUrl:
+      "https://res.cloudinary.com/dflnsufit/video/upload/v1782725239/Exclusive_Sarvesh_Kushare_after_entering_High_Jump_finals_at_World_Championships_-_Sports_Today_youtube_ynte5i.mp3",
+  },
+
+  "priyanka-goswami": {
+    badgeLabel: "ATHLETE SPEAKS",
+    episode: "EP 08",
+    heroImage: "/audio_8.webp", // TODO: add hero image
+
+    title: "The Walk That Changed India 🎧",
+    subtitle: "Priyanka Goswami breaks down the discipline of race walking", // TODO: update subtitle
+
+    descriptionParagraphs: [
+      "Priyanka Goswami explains the discipline of race walking — what it takes physically and mentally to compete in this unique event, and how it has shaped her journey as one of India's top athletes.", // TODO: refine
+    ],
+
+    keyMoments: [
+      { timestamp: "00:00", label: "Understanding race walking" }, // TODO
+    ],
+
+    chaptersLabel: "1 chapter", // TODO
+
+    quote: "", // TODO
+    quoteAttribution: "— Priyanka Goswami",
+
+    recordedDate: "", // TODO
+    location: "Jeetega India e-Conclave", // TODO: confirm
+
+    listeningCount: "0 listening", // TODO
+    trendingLabel: "",
+    categoryLabel: "Athlete Speaks",
+
+    totalDuration: "00:00", // TODO
+
+    audioUrl:
+      "https://res.cloudinary.com/dflnsufit/video/upload/v1782725428/Priyanka_Goswami_explains_what_is_race_walking_Jeetega_India_e-Conclave_-_ABP_NEWS_youtube_ts2fy6.mp3",
   },
 };
 

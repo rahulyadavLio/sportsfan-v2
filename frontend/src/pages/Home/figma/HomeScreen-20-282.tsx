@@ -7,7 +7,9 @@ import imgImageCwgBuildUp from "./dc69310e6de7c688834fc74a8bd50812e473c92d.png";
 import imgImageAthleteJam from "./d5cef240583d6d486f7cf4478eab242c3ad64fd7.png";
 import imgImageTrainingCamp from "./1a01ad838f85eac092c4c292ef07e0e2d80e39df.png";
 import { imgGroup } from "./svg-8d4uk";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
+import { athleteService } from "@/services/athlete.service";
 
 function Icon() {
   return (
@@ -1123,53 +1125,7 @@ function Container23() {
 }
 
 // ─── Athlete Cards Data ───────────────────────────────────────────────────────
-const athleteCardsData = [
-  {
-    id: 'gurindervir-singh',
-    image: './Gurindervir-Singh.webp',
-    tag: '#National Record',
-    views: '1.2M',
-    name: 'Gurindervir Singh',
-    sport: '100m Sprint',
-    likes: '38.2K',
-    comments: '184',
-    route: '/athlete/gurindervir-singh',
-  },
-  {
-    id: 'parul-choudhary',
-    image: './parul-choudhary.jpg', // Replace with Parul's image import
-    tag: '#AsianGamesSilver',
-    views: '1.2M',
-    name: 'Parul Chaudhary',
-    sport: '3000m Steeplechase',
-    likes: '28.4K',
-    comments: '184',
-    route: '/athlete/parul-choudhary',
-  },
-  {
-    id: 'neeraj-chopra',
-    image: imgContainer1,
-    tag: '#Tokyo Gold',
-    views: '2.5M',
-    name: 'Neeraj Chopra',
-    sport: 'Javelin Throw',
-    likes: '45.6K',
-    comments: '256',
-    route: '/athlete/neeraj-chopra',
-  },
-  {
-    id: 'avinash-sable',
-    image: imgContainer2,
-    tag: '#National Record',
-    views: '2.5M',
-    name: 'Avinash Sable',
-    sport: '3000m Steeplechase',
-    likes: '45.6K',
-    comments: '256',
-    route: '/athlete/avinash-sable',
-  },
-
-];
+// (data is now fetched dynamically from Firebase via athleteService.getAll)
 
 interface AthleteCardProps {
   image: string;
@@ -1705,15 +1661,56 @@ function Container36() {
 
 
 function Container18() {
+  const [athletes, setAthletes] = useState<AthleteCardProps[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    athleteService
+      .getAll()
+      .then((data: any[]) => {
+        const mapped: AthleteCardProps[] = data.map((a) => ({
+          image: a.image || '',
+          tag: a.achievementLabel ? `#${a.achievementLabel.replace(/\s+/g, '')}` : `#${(a.sport || '').replace(/\s+/g, '')}`,
+          views: a.stats?.worldRank || '—',
+          name: a.name || '',
+          sport: a.sport || '',
+          likes: String(a.stats?.totalGold ?? 0) + ' Golds',
+          comments: String(a.stats?.totalSilver ?? 0),
+          route: `/athlete/${a.slug}`,
+        }));
+        setAthletes(mapped);
+      })
+      .catch((err) => {
+        console.error('Failed to load athletes for home cards:', err);
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
   return (
     <div
       className="absolute left-0 top-[98px] w-[350px] overflow-x-auto overflow-y-hidden scrollbar-hide"
       data-name="Container"
     >
       <div className="flex gap-3 w-max pb-2">
-        {athleteCardsData.map((athlete) => (
-          <AthleteCard key={athlete.id} {...athlete} />
-        ))}
+        {loading
+          ? // Skeleton placeholders while fetching
+            Array.from({ length: 4 }).map((_, i) => (
+              <div
+                key={i}
+                className="relative border border-[rgba(255,255,255,0.08)] h-[276px] rounded-[16px] w-[167px] shrink-0 animate-pulse"
+                style={{
+                  backgroundImage:
+                    'linear-gradient(121.177deg, rgb(22,22,32) 0%, rgb(18,18,26) 100%)',
+                }}
+              >
+                <div className="absolute h-[192px] left-0 top-0 w-full bg-[rgba(255,255,255,0.05)] rounded-t-[16px]" />
+                <div className="absolute left-[10px] top-[204px] w-[120px] h-[12px] rounded bg-[rgba(255,255,255,0.08)]" />
+                <div className="absolute left-[10px] top-[222px] w-[80px] h-[10px] rounded bg-[rgba(255,255,255,0.05)]" />
+              </div>
+            ))
+          : athletes.map((athlete) => (
+              <AthleteCard key={athlete.route} {...athlete} />
+            ))}
       </div>
     </div>
   );
