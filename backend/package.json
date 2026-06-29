@@ -6,6 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
+        "seed:playbook": "ts-node src/scripts/seed-playbook.ts",
     "seed:athletes": "ts-node src/scripts/seed-athletes.ts",
     "seed:records": "ts-node src/scripts/seed-records.ts",
     "build": "nest build",

@@ -4,6 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import { HealthModule } from './modules/health/health.module';
 import { AthleteProfileModule } from './modules/athlete-profile/athlete-profile.module';
 import { RecordsModule } from './modules/records/records.module';
+import { PlaybookModule } from './modules/playbook/playbook.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { RecordsModule } from './modules/records/records.module';
 
     HealthModule,
     AthleteProfileModule,
+    PlaybookModule,
     RecordsModule,
   ],
 })
