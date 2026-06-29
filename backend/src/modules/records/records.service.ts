@@ -26,7 +26,7 @@ const GAP_ANALYSIS: Record<string, GapAnalysisRow> = {
   '100m_Men': {
     gapChange: 0.17, baselineGap: 0.68, baselineYear: '2016',
     trendDirection: 'Narrowing',
-    globalRank: '#245',   // Gurindervir Singh, worldathletics.org Jun 2026
+    globalRank: '#230',   // Gurindervir Singh, worldathletics.org Jun 2026
   },
   '100m_Women': {
     gapChange: 0.07, baselineGap: 0.75, baselineYear: '2016',
@@ -36,7 +36,7 @@ const GAP_ANALYSIS: Record<string, GapAnalysisRow> = {
   '200m_Men': {
     gapChange: 0.31, baselineGap: 1.44, baselineYear: '2018',
     trendDirection: 'Narrowing',
-    globalRank: '#37',    // Animesh Kujur, worldathletics.org Jun 2026
+    globalRank: '#43',    // Animesh Kujur, worldathletics.org Jun 2026
   },
   '200m_Women': {
     gapChange: 0, baselineGap: 1.48, baselineYear: '2015',

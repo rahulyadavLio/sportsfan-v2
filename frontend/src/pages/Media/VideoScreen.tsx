@@ -48,18 +48,41 @@ interface VideoData {
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
+export interface VideoData {
+  videoUrl: string;
+  thumbnail: string;
+  totalDuration: string;
+  badgeLabel: string;
+  episode: string;
+  category: string;
+  title: string;
+  metaLine: string;
+  description: string;
+  chapters: Array<{ timestamp: string; label: string }>;
+  relatedVideos: Array<{
+    title: string;
+    duration: string;
+    tag: string;
+    thumbnail: string;
+    path: string;
+  }>;
+  likeCount: number;
+  commentCount: number;
+}
+
 export const videosData: Record<string, VideoData> = {
-  '1': {
-    videoUrl: 'https://res.cloudinary.com/dflnsufit/video/upload/v1781888645/neeraj_vfuai6.mp4',
+
+  'neeraj-chopra': {
+    videoUrl: 'https://res.cloudinary.com/dflnsufit/video/upload/v1782723819/Neeraj_Chopra_wins_historic_gold_for_India_Tokyo2020_Highlights_-_Olympics_1080p_h264_youtube_kou6we.mp4',
     thumbnail: '/neeraj-journey-banner.png',
-    totalDuration: '8:07',
+    totalDuration: '8:07', // TODO: confirm actual duration of new video
     badgeLabel: 'ATHLETE STORY',
     episode: 'EP 01',
     category: 'Javelin',
-    title: 'Neeraj Chopra’s Journey to Glory',
+    title: 'Gold at Tokyo: The Iconic Throw 🥇',
     metaLine: '5.2k views · Athlete Story',
     description:
-      'Follow Neeraj Chopra’s incredible journey from a young athlete with big dreams to becoming one of India’s greatest sporting icons. This inspiring film traces his rise through years of hard work, international success, and historic achievements, highlighting the dedication, resilience, and passion that made him an Olympic and Commonwealth champion.',
+      'Relive the iconic moment Neeraj Chopra clinched India\u2019s first-ever Olympic gold in athletics at Tokyo 2020. This historic throw became a defining moment for Indian sport, inspiring a generation of athletes and cementing his legacy as one of the country\u2019s greatest sporting icons.',
     chapters: [
       { timestamp: '0:00', label: 'Early beginnings' },
       { timestamp: '2:08', label: 'Rise on the international stage' },
@@ -68,176 +91,161 @@ export const videosData: Record<string, VideoData> = {
     ],
     relatedVideos: [
       {
-        title: 'Technique Breakdown — Neeraj Chopra on Javelin',
-        duration: '14:30',
-        tag: 'Video',
-        thumbnail: '/neeraj.png',
-        path: '/video/2',
-      },
-      {
-        title: 'Gurindervir Singh — Breaking Records & Training',
-        duration: '7:15',
+        title: '10.09 — India Goes Sub-10.10 ⚡',
+        duration: '0:00',
         tag: 'Video',
         thumbnail: '/Gurindervir-Singh-3.png',
-        path: '/video/3',
+        path: '/video/gurindervir-singh',
+      },
+      {
+        title: '9:13 NR: Parul Flies in Doha 🔥',
+        duration: '9:13',
+        tag: 'Video',
+        thumbnail: '/parul-chaudhary.png',
+        path: '/video/parul-chaudhary',
       },
     ],
     likeCount: 4823,
     commentCount: 318,
   },
-  '2': {
-    videoUrl: 'https://res.cloudinary.com/dflnsufit/video/upload/v1781888626/Parul1_nypg60.mp4',
-    thumbnail: '/parul-choudhary-banner.png',
-    totalDuration: '7:42',
-    badgeLabel: 'ATHLETE STORY',
-    episode: 'EP 01',
-    category: 'Middle Distance',
-    title: 'Parul Choudhary’s Life Journey',
-    metaLine: '3.9k views · Athlete Story',
-    description:
-      'Discover the inspiring journey of Indian middle and long-distance runner Parul Choudhary. From humble beginnings to representing India on the international stage, this story captures her determination, resilience, and relentless pursuit of excellence. Through years of disciplined training and perseverance, Parul has emerged as one of India’s brightest athletics stars, inspiring a new generation of runners.',
-    chapters: [
-      { timestamp: '0:00', label: 'Growing up with a dream' },
-      { timestamp: '2:05', label: 'Overcoming challenges' },
-      { timestamp: '4:18', label: 'Breaking through on the international stage' },
-      { timestamp: '6:20', label: 'Chasing future milestones' },
-    ],
-    relatedVideos: [
-      {
-        title: 'Parul on Endurance & Discipline',
-        duration: '13:45',
-        tag: 'Video',
-        thumbnail: '/parul.png',
-        path: '/video/4',
-      },
-      {
-        title: 'Neeraj Chopra’s Journey to Glory',
-        duration: '8:07',
-        tag: 'Video',
-        thumbnail: '/neeraj.png',
-        path: '/video/1',
-      },
-    ],
-    likeCount: 3968,
-    commentCount: 241,
-  },
-  '3': {
-    videoUrl: 'https://res.cloudinary.com/dflnsufit/video/upload/v1781888584/Gurindervir_Singh_hdese6.mp4',
-    thumbnail: '/gurindervir-journey-banner.png',
-    totalDuration: '7:18',
-    badgeLabel: 'ATHLETE STORY',
-    episode: 'EP 01',
-    category: 'Sprints',
-    title: 'Journey: From Trauma to 10.20s',
-    metaLine: '4.6k views · Athlete Story',
-    description:
-      'Follow the remarkable journey of Gurindervir Singh as he overcame personal setbacks and injuries to become one of India’s fastest sprinters. This inspiring story captures the resilience, determination, and relentless work ethic that helped him break barriers, rewrite records, and establish himself among the country’s elite athletes.',
-    chapters: [
-      { timestamp: '0:00', label: 'A difficult beginning' },
-      { timestamp: '1:58', label: 'Fighting through setbacks' },
-      { timestamp: '4:12', label: 'The road to 10.20 seconds' },
-      { timestamp: '6:08', label: 'Chasing new records' },
-    ],
-    relatedVideos: [
-      {
-        title: 'Take on Breaking Records & Training',
-        duration: '14:05',
-        tag: 'Video',
-        thumbnail: '/Gurindervir-Singh-3.png',
-        path: '/video/5',
-      },
-      {
-        title: 'Neeraj Chopra’s Journey to Glory',
-        duration: '8:07',
-        tag: 'Video',
-        thumbnail: '/neeraj.png',
-        path: '/video/1',
-      },
-    ],
-    likeCount: 4285,
-    commentCount: 267,
-  },
-  '4': {
-    videoUrl: 'https://res.cloudinary.com/dflnsufit/video/upload/v1781931538/vidssave.com_National_Record_Has_Been_Broken_4X100M_RELAY_MEN_FINAL___2ND_INDIAN_RELAY_COMPETITION___CHANDIGARH_360P_tffq9c.mp4',
-    thumbnail: '/relay-national-record-banner.png',
-    totalDuration: '5:36',
-    badgeLabel: 'RECORD ALERT',
-    episode: 'EP 01',
-    category: 'Relay',
-    title: 'National Record Broken: 4x100m Relay Men’s Final',
-    metaLine: '6.8k views · National Record',
-    description:
-      'Witness a historic moment in Indian athletics as the men’s 4x100m relay team storms to a new national record. Experience the electrifying race, flawless baton exchanges, and explosive finish that etched the quartet’s names into the record books. This milestone reflects the team’s speed, precision, and months of dedicated preparation.',
-    chapters: [
-      { timestamp: '0:00', label: 'Race introduction' },
-      { timestamp: '1:12', label: 'Perfect baton exchanges' },
-      { timestamp: '3:18', label: 'Record-breaking finish' },
-      { timestamp: '4:48', label: 'Celebration & reactions' },
-    ],
-    relatedVideos: [
-      {
-        title: 'Journey: From Trauma to 10.20s',
-        duration: '7:18',
-        tag: 'Video',
-        thumbnail: '/Gurindervir-Singh-3.png',
-        path: '/video/3',
-      },
-      {
-        title: 'Neeraj Chopra’s Journey to Glory',
-        duration: '8:07',
-        tag: 'Video',
-        thumbnail: '/neeraj.png',
-        path: '/video/1',
-      },
-    ],
-    likeCount: 6154,
-    commentCount: 389,
-  },
-  '5': {
-    videoUrl: 'https://res.cloudinary.com/dflnsufit/video/upload/v1782111513/videoplayback_2_online-video-cutter.com_q5copp.mp4',
-    thumbnail: '/praveen-chithravel-banner.png',
-    totalDuration: '1:12',
 
-    badgeLabel: 'CWG UPDATE',
+  'gurindervir-singh': {
+    videoUrl: 'https://res.cloudinary.com/dflnsufit/video/upload/v1782723762/Animesh_Kujur_smashes_the_NR_in_Men_s_200m_with_a_timing_of_20.32s_indianathletics_teamindia_-_The_Bridge_720p_h264_youtube_nqjamt.mp4',
+    thumbnail: '/Gurindervir-Singh-3.png', // TODO: update thumbnail
+    totalDuration: '0:00', // TODO: fill actual duration
+    badgeLabel: 'ATHLETE STORY',
+    episode: 'EP 02',
+    category: 'Sprint',
+    title: '10.09 — India Goes Sub-10.10 ⚡',
+    metaLine: '0 views · Athlete Story', // TODO: update views
+    description:
+      'Gurindervir Singh becomes one of the fastest men in Indian history, breaking the sub-10.10 barrier in the 100m and rewriting national records with this electrifying performance.',
+    chapters: [
+      { timestamp: '0:00', label: 'Build-up to the race' },
+    ],
+    relatedVideos: [
+      {
+        title: 'Gold at Tokyo: The Iconic Throw 🥇',
+        duration: '8:07',
+        tag: 'Video',
+        thumbnail: '/neeraj-journey-banner.png',
+        path: '/video/neeraj-chopra',
+      },
+    ],
+    likeCount: 0,
+    commentCount: 0,
+  },
+
+  'murali-sreeshankar': {
+    videoUrl: '', // TODO: video missing for Murali Sreeshankar
+    thumbnail: '/murali-sreeshankar.png', // TODO: update thumbnail
+    totalDuration: '0:00',
+    badgeLabel: 'ATHLETE STORY',
+    episode: 'EP 03',
+    category: 'Long Jump',
+    title: 'Murali Sreeshankar\u2019s Story', // TODO: update title
+    metaLine: '0 views · Athlete Story',
+    description:
+      'Video coming soon — Murali Sreeshankar\u2019s journey as one of India\u2019s top long jumpers.', // TODO
+    chapters: [],
+    relatedVideos: [],
+    likeCount: 0,
+    commentCount: 0,
+  },
+
+  'parul-chaudhary': {
+    videoUrl: 'https://res.cloudinary.com/dflnsufit/video/upload/v1782723763/tweeload_0huh67l9_gzq2dy.mp4',
+    thumbnail: '/parul-chaudhary.png', // TODO: update thumbnail
+    totalDuration: '9:13',
+    badgeLabel: 'ATHLETE STORY',
+    episode: 'EP 04',
+    category: 'Distance Running',
+    title: '9:13 NR: Parul Flies in Doha 🔥',
+    metaLine: '0 views · Athlete Story',
+    description:
+      'Parul Chaudhary sets a new national record with a stunning 9:13 performance in Doha, showcasing the speed and endurance that have made her one of India\u2019s leading distance runners.',
+    chapters: [
+      { timestamp: '0:00', label: 'Race build-up' },
+    ],
+    relatedVideos: [],
+    likeCount: 0,
+    commentCount: 0,
+  },
+
+  'pooja-singh': {
+    videoUrl: '', // TODO: video missing for Pooja Singh
+    thumbnail: '/pooja-singh.png', // TODO: update thumbnail
+    totalDuration: '0:00',
+    badgeLabel: 'ATHLETE STORY',
     episode: 'EP 05',
-    category: 'Triple Jump',
-
-    title: 'Praveen Chithravel on CWG 2026',
-    metaLine: '2.8k views · CWG Update',
-
+    category: 'Athletics', // TODO: update category
+    title: 'Pooja Singh\u2019s Story', // TODO: update title
+    metaLine: '0 views · Athlete Story',
     description:
-      'Indian triple jumper Praveen Chithravel shares his thoughts on the road to the 2026 Commonwealth Games. He discusses his preparations, performance goals, and the determination required to compete against the world’s best while proudly representing India on the international stage.',
-
-    chapters: [
-      { timestamp: '0:00', label: 'Road to CWG 2026' },
-      { timestamp: '0:26', label: 'Training and preparation' },
-      { timestamp: '0:50', label: 'Goals for India' },
-      { timestamp: '1:05', label: 'Message to supporters' },
-    ],
-
-    relatedVideos: [
-      {
-        title: 'Tejaswin Shankar on CWG & Asian Games Qualification',
-        duration: '1:00',
-        tag: 'Video',
-        thumbnail: '/tejaswin-shankar-banner.png',
-        path: '/video/2',
-      },
-      {
-        title: 'Gurindervir Singh — Breaking Records & Training',
-        duration: '1:10',
-        tag: 'Video',
-        thumbnail: '/Gurindervir-Singh-3.png',
-        path: '/video/3',
-      },
-    ],
-
-    likeCount: 2874,
-    commentCount: 164,
+      'Video coming soon — Pooja Singh\u2019s journey in Indian athletics.', // TODO
+    chapters: [],
+    relatedVideos: [],
+    likeCount: 0,
+    commentCount: 0,
   },
 
-};
+  'tejaswin-shankar': {
+    videoUrl: 'https://res.cloudinary.com/dflnsufit/video/upload/v1782723821/Shankar_Tejaswin_Wins_Spectacular_Gold_Asian_Indoor_Athletics_Championships_Trending_Show_-_Republic_World_1080p_h264_youtube_e6klfc.mp4',
+    thumbnail: '/tejaswin-shankar.png', // TODO: update thumbnail
+    totalDuration: '0:00', // TODO: fill duration — title suggests "8057" (jump score, not time)
+    badgeLabel: 'ATHLETE STORY',
+    episode: 'EP 06',
+    category: 'High Jump',
+    title: '8057: Tejaswin Goes Beyond 8K 🔥',
+    metaLine: '0 views · Athlete Story',
+    description:
+      'Tejaswin Shankar shatters expectations with a historic decathlon score, going beyond the 8000-point mark and claiming gold at the Asian Indoor Athletics Championships.',
+    chapters: [
+      { timestamp: '0:00', label: 'Path to gold' },
+    ],
+    relatedVideos: [],
+    likeCount: 0,
+    commentCount: 0,
+  },
 
+  'sarvesh-kushare': {
+    videoUrl: 'https://res.cloudinary.com/dflnsufit/video/upload/v1782723777/Sarvesh_Kushare_From_Remote_Indian_Village_to_World_s_High_Jump_Final_-_Kaushik_Roy_Chowdhury_1080p_h264_youtube_x1sjxf.mp4',
+    thumbnail: '/sarvesh-kushare.png', // TODO: update thumbnail
+    totalDuration: '0:00',
+    badgeLabel: 'ATHLETE STORY',
+    episode: 'EP 07',
+    category: 'High Jump',
+    title: 'Village Pit to World Final 🏆',
+    metaLine: '0 views · Athlete Story',
+    description:
+      'From a remote Indian village to competing on the world stage — Sarvesh Kushare\u2019s remarkable journey to the high jump World Final showcases grit, determination, and raw talent.',
+    chapters: [
+      { timestamp: '0:00', label: 'Humble beginnings' },
+    ],
+    relatedVideos: [],
+    likeCount: 0,
+    commentCount: 0,
+  },
+
+  'priyanka-goswami': {
+    videoUrl: 'https://res.cloudinary.com/dflnsufit/video/upload/v1782723833/From_Struggles_to_Triumph_Priyanka_Goswami_s_Racewalking_Story_Sports_Ka_Mahakumbh_-_Radio_City_India_1080p_h264_youtube_a55jkd.mp4',
+    thumbnail: '/priyanka-goswami.png', // TODO: update thumbnail
+    totalDuration: '0:00',
+    badgeLabel: 'ATHLETE STORY',
+    episode: 'EP 08',
+    category: 'Race Walk',
+    title: 'Walk of Triumph: Priyanka\u2019s Story 🚶\u200d♀️',
+    metaLine: '0 views · Athlete Story',
+    description:
+      'Priyanka Goswami\u2019s journey from struggle to triumph in the discipline of racewalking — a story of perseverance that has made her one of India\u2019s standout track and field athletes.',
+    chapters: [
+      { timestamp: '0:00', label: 'Early struggles' },
+    ],
+    relatedVideos: [],
+    likeCount: 0,
+    commentCount: 0,
+  },
+}
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function parseDuration(str: string): number {
