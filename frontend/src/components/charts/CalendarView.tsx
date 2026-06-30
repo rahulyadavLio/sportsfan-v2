@@ -74,8 +74,9 @@ export default function CalendarView({
   playbook,
   onNavigate,
 }: Props) {
-  const [year, setYear] = useState(2026);
-  const [month, setMonth] = useState(2); // 0-indexed, March = 2
+  const _now = new Date();
+  const [year, setYear] = useState(_now.getFullYear());
+  const [month, setMonth] = useState(_now.getMonth()); // 0-indexed, defaults to current month
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
   // dateKey → drops on that exact date
