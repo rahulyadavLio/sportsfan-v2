@@ -5,7 +5,6 @@ import AthleteProfile from "@/pages/AthleteProfile/AthleteProfile";
 import Playbook from "@/pages/Playbook/Playbook";
 import AudioPlayerScreen from "@/pages/Media/AudioPlayerScreen";
 import VideoScreen from "@/pages/Media/VideoScreen";
-import ArticleScreen from "@/pages/Media/ArticleScreen";
 import FanZone from "@/pages/FanZone/FanZone";
 import WatchAlong from "@/pages/WatchAlong/WatchAlong";
 import WatchAlongEvent from "@/pages/WatchAlong/WatchAlongEvent";
@@ -41,7 +40,6 @@ export const router = createBrowserRouter([
       { path: "/audio", Component: AudioPlayerScreen },
       { path: "/video/:id", Component: VideoScreen },
       { path: "/video", Component: VideoScreen },
-      { path: "/article", Component: ArticleScreen },
       { path: "/fan-zone", Component: FanZone },
       { path: "/watch-along", Component: WatchAlong },
       { path: "/watch-along/:eventId", Component: WatchAlongEvent },

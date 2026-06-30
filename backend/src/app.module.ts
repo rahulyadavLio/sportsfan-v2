@@ -5,6 +5,7 @@ import { HealthModule } from './modules/health/health.module';
 import { AthleteProfileModule } from './modules/athlete-profile/athlete-profile.module';
 import { RecordsModule } from './modules/records/records.module';
 import { PlaybookModule } from './modules/playbook/playbook.module';
+import { ArticlesModule } from './modules/articles/articles.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { PlaybookModule } from './modules/playbook/playbook.module';
     AthleteProfileModule,
     PlaybookModule,
     RecordsModule,
+    ArticlesModule,
   ],
 })
 export class AppModule { }

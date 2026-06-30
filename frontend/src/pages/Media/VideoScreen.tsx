@@ -74,7 +74,7 @@ export const videosData: Record<string, VideoData> = {
 
   'neeraj-chopra': {
     videoUrl: 'https://res.cloudinary.com/dflnsufit/video/upload/v1782723819/Neeraj_Chopra_wins_historic_gold_for_India_Tokyo2020_Highlights_-_Olympics_1080p_h264_youtube_kou6we.mp4',
-    thumbnail: '/neeraj-journey-banner.png',
+    thumbnail: '/neeraj.png',
     totalDuration: '8:07', // TODO: confirm actual duration of new video
     badgeLabel: 'ATHLETE STORY',
     episode: 'EP 01',
@@ -111,7 +111,7 @@ export const videosData: Record<string, VideoData> = {
 
   'gurindervir-singh': {
     videoUrl: 'https://res.cloudinary.com/dflnsufit/video/upload/v1782723762/Animesh_Kujur_smashes_the_NR_in_Men_s_200m_with_a_timing_of_20.32s_indianathletics_teamindia_-_The_Bridge_720p_h264_youtube_nqjamt.mp4',
-    thumbnail: '/Gurindervir-Singh-3.png', // TODO: update thumbnail
+    thumbnail: '/Gurindervir-Singh.webp', // TODO: update thumbnail
     totalDuration: '0:00', // TODO: fill actual duration
     badgeLabel: 'ATHLETE STORY',
     episode: 'EP 02',
@@ -138,7 +138,7 @@ export const videosData: Record<string, VideoData> = {
 
   'murali-sreeshankar': {
     videoUrl: '', // TODO: video missing for Murali Sreeshankar
-    thumbnail: '/murali-sreeshankar.png', // TODO: update thumbnail
+    thumbnail: '/Sreeshankar-article.jpeg', // TODO: update thumbnail
     totalDuration: '0:00',
     badgeLabel: 'ATHLETE STORY',
     episode: 'EP 03',
@@ -155,7 +155,7 @@ export const videosData: Record<string, VideoData> = {
 
   'parul-chaudhary': {
     videoUrl: 'https://res.cloudinary.com/dflnsufit/video/upload/v1782723763/tweeload_0huh67l9_gzq2dy.mp4',
-    thumbnail: '/parul-chaudhary.png', // TODO: update thumbnail
+    thumbnail: '/parul-choudhary.jpg', // TODO: update thumbnail
     totalDuration: '9:13',
     badgeLabel: 'ATHLETE STORY',
     episode: 'EP 04',
@@ -174,7 +174,7 @@ export const videosData: Record<string, VideoData> = {
 
   'pooja-singh': {
     videoUrl: '', // TODO: video missing for Pooja Singh
-    thumbnail: '/pooja-singh.png', // TODO: update thumbnail
+    thumbnail: '/Pooja-Singh-article.webp', // TODO: update thumbnail
     totalDuration: '0:00',
     badgeLabel: 'ATHLETE STORY',
     episode: 'EP 05',
@@ -191,7 +191,7 @@ export const videosData: Record<string, VideoData> = {
 
   'tejaswin-shankar': {
     videoUrl: 'https://res.cloudinary.com/dflnsufit/video/upload/v1782723821/Shankar_Tejaswin_Wins_Spectacular_Gold_Asian_Indoor_Athletics_Championships_Trending_Show_-_Republic_World_1080p_h264_youtube_e6klfc.mp4',
-    thumbnail: '/tejaswin-shankar.png', // TODO: update thumbnail
+    thumbnail: '/tejaswin-article.jpeg', // TODO: update thumbnail
     totalDuration: '0:00', // TODO: fill duration — title suggests "8057" (jump score, not time)
     badgeLabel: 'ATHLETE STORY',
     episode: 'EP 06',
@@ -210,7 +210,7 @@ export const videosData: Record<string, VideoData> = {
 
   'sarvesh-kushare': {
     videoUrl: 'https://res.cloudinary.com/dflnsufit/video/upload/v1782723777/Sarvesh_Kushare_From_Remote_Indian_Village_to_World_s_High_Jump_Final_-_Kaushik_Roy_Chowdhury_1080p_h264_youtube_x1sjxf.mp4',
-    thumbnail: '/sarvesh-kushare.png', // TODO: update thumbnail
+    thumbnail: '/Sarvesh-Kushare-article.avif', // TODO: update thumbnail
     totalDuration: '0:00',
     badgeLabel: 'ATHLETE STORY',
     episode: 'EP 07',
