@@ -123,7 +123,7 @@ export default function AppLayout() {
       <div className="w-full max-w-[390px] bg-[#0b0b0f] flex flex-col h-full">
         <ScrollToTop scrollRef={mainRef} />
 
-        <main ref={mainRef} className="flex-1 min-h-0 overflow-y-auto">
+        <main ref={mainRef} className="flex-1 min-h-0 overflow-y-auto no-scrollbar">
           <Outlet />
         </main>
 

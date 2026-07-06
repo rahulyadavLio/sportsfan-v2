@@ -2,7 +2,7 @@ import { useNavigate, useParams } from 'react-router';
 import { Check, Calendar, Share2, Bookmark, ArrowLeft } from 'lucide-react';
 
 const coachNames: Record<string, string> = {
-  '1': 'Ravi Singh',
+  '1': 'Ravi Shastri',
   '2': 'Priya Sharma',
   '3': 'Arun Kumar',
   '4': 'Sneha Patel',
@@ -11,11 +11,11 @@ const coachNames: Record<string, string> = {
 export default function StoreBookingSuccess() {
   const navigate = useNavigate();
   const { id } = useParams();
-  const coachName = coachNames[id || '1'] || 'Ravi Singh';
+  const coachName = coachNames[id || '1'] || 'Ravi Shastri';
 
   return (
-    <div className="bg-black w-full flex justify-center h-screen">
-      <div className="w-full max-w-[390px] bg-[#0b0b0f] relative flex flex-col overflow-x-scroll  no-scrollbar h-screen">
+    <div className="bg-black w-full flex justify-center min-h-screen">
+      <div className="w-full max-w-[390px] bg-[#0b0b0f] relative flex flex-col min-h-screen">
         {/* Glow background */}
         <div className="absolute top-0 left-0 right-0 h-[350px] overflow-hidden pointer-events-none">
           <div className="absolute top-[-80px] left-1/2 -translate-x-1/2 w-[300px] h-[300px] rounded-full bg-[rgba(201,17,95,0.18)] blur-[80px]" />
@@ -34,8 +34,8 @@ export default function StoreBookingSuccess() {
 
         <div className="flex-1 flex flex-col items-center justify-center px-6 relative z-10">
           {/* Success ring animation */}
-          <div className="relative m-2">
-            <div className="w-[80px] h-[80px] rounded-full bg-gradient-to-br from-[#c9115f] to-[#cd620e] flex items-center justify-center shadow-[0_0_40px_rgba(201,17,95,0.6)]">
+          <div className="relative mb-6">
+            <div className="w-[100px] h-[100px] rounded-full bg-gradient-to-br from-[#c9115f] to-[#cd620e] flex items-center justify-center shadow-[0_0_40px_rgba(201,17,95,0.6)]">
               <Check className="w-[48px] h-[48px] text-white" strokeWidth={3} />
             </div>
             {/* Ripple rings */}
@@ -43,7 +43,7 @@ export default function StoreBookingSuccess() {
           </div>
 
           <h1 className="text-white text-[26px] font-bold text-center mb-2">Booking Confirmed!</h1>
-          <p className="text-[#99A1AF] text-[14px] text-center mb-4">Your session has been successfully booked. Get ready to level up.</p>
+          <p className="text-[#99A1AF] text-[14px] text-center mb-8">Your session has been successfully booked. Get ready to level up.</p>
 
           {/* Booking card */}
           <div className="w-full bg-[#111116] rounded-[20px] border border-[rgba(255,255,255,0.08)] p-5 mb-6">
@@ -73,7 +73,7 @@ export default function StoreBookingSuccess() {
 
           {/* Action buttons */}
           <div className="w-full flex gap-2 mb-4">
-            <button className="flex px-2 gap-1.5 bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.1)] rounded-full py-3 flex items-center justify-center ">
+            <button className="flex-1 bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.1)] rounded-full py-3 flex items-center justify-center gap-1.5">
               <Calendar className="w-[15px] h-[15px] text-[#99A1AF]" />
               <span className="text-[#99A1AF] text-[13px] font-semibold">Add to Calendar</span>
             </button>
@@ -89,7 +89,7 @@ export default function StoreBookingSuccess() {
         </div>
 
         {/* CTA */}
-        <div className="px-4 pb-28">
+        <div className="px-4 pb-8">
           <button
             onClick={() => navigate('/store/my-bookings')}
             className="w-full bg-gradient-to-r from-[#c9115f] to-[#cd620e] rounded-full py-3.5 text-white text-[15px] font-bold shadow-[0_0_20px_rgba(201,17,95,0.5)]"

@@ -3,7 +3,7 @@ import { ArrowLeft, Star } from 'lucide-react';
 import { useState } from 'react';
 
 const coachNames: Record<string, string> = {
-  '1': 'Ravi Singh',
+  '1': 'Ravi Shastri',
   '2': 'Priya Sharma',
   '3': 'Arun Kumar',
   '4': 'Sneha Patel',
@@ -14,7 +14,7 @@ const ratingLabels = ['', 'Poor', 'Fair', 'Good', 'Great', 'Excellent'];
 export default function StoreReview() {
   const navigate = useNavigate();
   const { id } = useParams();
-  const coachName = coachNames[id || '1'] || 'Ravi Singh';
+  const coachName = coachNames[id || '1'] || 'Ravi Shastri';
 
   const [rating, setRating] = useState(0);
   const [hovered, setHovered] = useState(0);

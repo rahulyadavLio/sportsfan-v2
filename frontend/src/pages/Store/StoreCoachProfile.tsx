@@ -1,66 +1,145 @@
 import { useNavigate, useParams } from 'react-router';
 import { ArrowLeft, Star, Clock, Share2, Bookmark, Award, Shield, MessageCircle, ChevronDown, ChevronUp, CheckCircle, Zap } from 'lucide-react';
 import { useState } from 'react';
+import { CoachBadge } from './Store';
 
 const coachData: Record<string, {
   id: number; name: string; role: string; experience: string; rating: number; reviews: number;
   sessionsCompleted: number; price: string; nextSlot: string; image: string; verified: boolean;
+  badge: 'afi' | 'independent';
   tagline: string; about: string; achievements: string[]; certifications: string[];
   services: { title: string; duration: string; price: string; desc: string }[];
   slots: { date: string; day: string; num: number; times: string[] }[];
   reviewList: { user: string; rating: number; comment: string; date: string }[];
 }> = {
   '1': {
-    id: 1, name: 'Ravi Singh', role: 'Head Athletics Coach', experience: '15 yrs',
-    rating: 4.9, reviews: 312, sessionsCompleted: 1240, price: '₹1,800/hr', nextSlot: 'Today 4PM',
-    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=900&fit=crop&auto=format&q=80',
-    verified: true,
-    tagline: 'Trained 3 CWG qualifiers · 12 national champions',
-    about: "Former national-level javelin athlete turned elite coach. Specializes in technical refinement, competition preparation, and mental conditioning for high-performance athletes.",
-    achievements: ['3x National Championship Coach Award', 'Asian Athletics Federation Certified', 'Trained 3 CWG 2026 qualifiers', '12+ national record breakthroughs'],
-    certifications: ['IAAF Level 3 Coach', 'Sports Science MSc – Loughborough', 'SAI Coaching License', 'NSCA Certified Strength Coach'],
+    id: 1, name: 'Anubhav Karmakar', role: 'Founder, Athloft Multisport', experience: '12 yrs',
+    rating: 4.9, reviews: 218, sessionsCompleted: 870, price: '₹2,200/hr', nextSlot: 'Today 5PM',
+    image: 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=800&h=900&fit=crop&auto=format&q=80',
+    verified: true, badge: 'independent',
+    tagline: 'USATF-certified · Marathons & IronMan specialist',
+    about: "Founder of Athloft Multisport, Anubhav is a USATF-certified coach who has guided athletes across global major marathons including Boston, Berlin, and Tokyo, as well as IronMan events worldwide. His coaching blends biomechanical precision with event-specific periodisation.",
+    achievements: ['USATF Level 2 Certified Coach', 'Coached 40+ Boston Marathon finishers', 'IronMan 70.3 Age Group Coach of the Year 2023', '12 athletes with sub-4hr marathon PBs under his plan'],
+    certifications: ['USATF Level 2 Track & Field', 'IRONMAN Certified Coach', 'Sports Science Diploma – ISSA', 'First Aid & CPR Certified'],
     services: [
-      { title: 'Technique Analysis', duration: '60 min', price: '₹1,800', desc: 'Video-based biomechanical breakdown of your form with actionable fixes.' },
-      { title: 'Competition Prep', duration: '90 min', price: '₹2,500', desc: 'Peak performance strategy with mental prep and race-day plan.' },
-      { title: 'Monthly Mentorship', duration: '4 sessions', price: '₹6,500', desc: 'Structured monthly coaching with progress tracking.' },
+      { title: 'Marathon Training Plan', duration: '16 weeks', price: '₹8,500', desc: 'Full periodised marathon plan with weekly check-ins and race strategy.' },
+      { title: 'IronMan Prep Session', duration: '90 min', price: '₹3,200', desc: 'Multi-discipline pacing, nutrition strategy, and transition practice.' },
+      { title: 'Monthly Online Coaching', duration: '4 sessions', price: '₹6,500', desc: 'Remote coaching with video analysis, structured training blocks and recovery tracking.' },
     ],
     slots: [
-      { date: 'Today', day: 'Mon', num: 16, times: ['4:00 PM', '5:30 PM', '7:00 PM'] },
-      { date: 'Tue', day: 'Tue', num: 17, times: ['9:00 AM', '11:00 AM', '3:00 PM'] },
-      { date: 'Thu', day: 'Thu', num: 19, times: ['10:00 AM', '2:00 PM', '6:00 PM'] },
-      { date: 'Fri', day: 'Fri', num: 20, times: ['8:00 AM', '4:30 PM'] },
-      { date: 'Sat', day: 'Sat', num: 21, times: ['9:00 AM', '11:30 AM', '1:00 PM'] },
+      { date: 'Today', day: 'Thu', num: 3, times: ['5:00 PM', '6:30 PM'] },
+      { date: 'Fri', day: 'Fri', num: 4, times: ['7:00 AM', '5:00 PM', '6:30 PM'] },
+      { date: 'Sat', day: 'Sat', num: 5, times: ['8:00 AM', '10:00 AM', '12:00 PM'] },
+      { date: 'Sun', day: 'Sun', num: 6, times: ['7:00 AM', '9:00 AM'] },
+      { date: 'Mon', day: 'Mon', num: 7, times: ['6:00 AM', '5:30 PM'] },
     ],
     reviewList: [
-      { user: 'Arjun M.', rating: 5, comment: "Completely transformed my javelin release angle. Went from 72m to 81m in 3 months!", date: '2 days ago' },
-      { user: 'Pooja K.', rating: 5, comment: "Incredibly detail-oriented. His video analysis is unlike anything I've experienced.", date: '1 week ago' },
-      { user: 'Santosh R.', rating: 4, comment: "Very professional and motivating. Highly recommend for serious athletes.", date: '2 weeks ago' },
+      { user: 'Rahul M.', rating: 5, comment: "Anubhav's marathon plan took me from 4:45 to 3:58. Incredibly structured and motivating.", date: '1 week ago' },
+      { user: 'Preethi S.', rating: 5, comment: "Best IronMan coach in Bengaluru. His multi-sport periodisation is elite-level.", date: '2 weeks ago' },
+      { user: 'Kartik V.', rating: 4, comment: "Very knowledgeable about global events. The Boston qualifier plan was spot on.", date: '1 month ago' },
     ],
   },
   '2': {
-    id: 2, name: 'Priya Sharma', role: 'Sports Nutritionist', experience: '10 yrs',
-    rating: 4.8, reviews: 278, sessionsCompleted: 890, price: '₹1,200/hr', nextSlot: 'Tomorrow 10AM',
-    image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&h=900&fit=crop&auto=format&q=80',
-    verified: true,
-    tagline: 'Nutritionist for India Athletics Team 2024',
-    about: "RD-certified sports nutritionist with a decade of experience working with elite track and field athletes. Specializes in periodized nutrition and competition fueling.",
-    achievements: ['Nutritionist for India Athletics Team 2024', '4 national athletes on optimized plans', 'Published researcher in sports dietetics', 'IOC Diploma in Sports Nutrition'],
-    certifications: ['Registered Dietitian (RD)', 'IOC Diploma in Sports Nutrition', 'NSCA Certified Performance Nutrition', 'Sports Science BSc – Delhi University'],
+    id: 2, name: 'Vikas Srinivasan', role: 'Founder, Runpundit', experience: '14 yrs',
+    rating: 4.8, reviews: 342, sessionsCompleted: 1420, price: '₹1,800/hr', nextSlot: 'Tomorrow 9AM',
+    image: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=800&h=900&fit=crop&auto=format&q=80',
+    verified: true, badge: 'independent',
+    tagline: 'Coached 3,500+ runners · 5K to ultra-marathon',
+    about: "Vikas Srinivasan is the founder of Runpundit, one of Bangalore's most trusted running coaching platforms. With 14 years of experience, he has personally coached over 3,500 runners across distances from 5K to full ultra-marathons, both in-person and online.",
+    achievements: ['3,500+ runners coached across all distances', 'Runpundit community of 8,000+ members', 'Featured in Runner\'s World India 2022 & 2023', '18 athletes with first sub-3:30 marathons'],
+    certifications: ['Athletics Federation of India – Distance Coach', 'USATF Level 1 Certified', 'Sports Psychology Certificate – NIMHANS', 'Ultra Running Coach Certification'],
     services: [
-      { title: 'Nutrition Assessment', duration: '60 min', price: '₹1,200', desc: 'Comprehensive diet analysis with personalized macro targets.' },
-      { title: 'Competition Fueling Plan', duration: '45 min', price: '₹1,800', desc: 'Pre/during/post-competition nutrition strategy for your event.' },
-      { title: 'Monthly Nutrition Plan', duration: '4 check-ins', price: '₹4,200', desc: 'Full-month periodized nutrition with weekly adjustments.' },
+      { title: '5K Speed Programme', duration: '8 weeks', price: '₹4,200', desc: 'Speed-focused periodised block for 5K PB seekers with weekly intervals and test runs.' },
+      { title: 'Marathon to Ultra Transition', duration: '12 weeks', price: '₹7,000', desc: 'Structured ultra-running introduction with trail running fundamentals and race strategy.' },
+      { title: 'Video Running Analysis', duration: '60 min', price: '₹1,800', desc: 'Slow-motion gait analysis with corrective drills and footstrike recommendations.' },
     ],
     slots: [
-      { date: 'Tue', day: 'Tue', num: 17, times: ['10:00 AM', '11:30 AM', '2:00 PM'] },
-      { date: 'Wed', day: 'Wed', num: 18, times: ['9:00 AM', '12:00 PM'] },
-      { date: 'Thu', day: 'Thu', num: 19, times: ['10:00 AM', '3:00 PM', '5:00 PM'] },
-      { date: 'Fri', day: 'Fri', num: 20, times: ['11:00 AM', '2:30 PM'] },
+      { date: 'Fri', day: 'Fri', num: 4, times: ['9:00 AM', '11:00 AM', '3:00 PM'] },
+      { date: 'Sat', day: 'Sat', num: 5, times: ['6:30 AM', '8:00 AM', '10:00 AM'] },
+      { date: 'Sun', day: 'Sun', num: 6, times: ['7:00 AM', '5:00 PM'] },
+      { date: 'Mon', day: 'Mon', num: 7, times: ['6:00 AM', '7:30 AM', '6:00 PM'] },
     ],
     reviewList: [
-      { user: 'Megha T.', rating: 5, comment: "Priya's plan helped me shave 0.3s off my 400m time. Nutrition is everything!", date: '3 days ago' },
-      { user: 'Deepak S.', rating: 5, comment: "Finally a nutritionist who understands athlete schedules. Worth every rupee.", date: '1 week ago' },
-      { user: 'Rina P.', rating: 4, comment: "Very responsive and knowledgeable. The competition fueling plan was a game changer.", date: '3 weeks ago' },
+      { user: 'Anjali K.', rating: 5, comment: "Vikas transformed my running. Went from half-marathon to 50K with his program. Incredible!", date: '3 days ago' },
+      { user: 'Sathish P.', rating: 5, comment: "The video analysis alone was worth it. Fixed my heel-striking in 3 sessions.", date: '1 week ago' },
+      { user: 'Divya R.', rating: 4, comment: "Very accessible for online coaching. His feedback is always timely and detailed.", date: '3 weeks ago' },
+    ],
+  },
+  '3': {
+    id: 3, name: 'Kiran Badiger', role: 'Distance Running Coach', experience: '9 yrs',
+    rating: 4.7, reviews: 156, sessionsCompleted: 620, price: '₹1,500/hr', nextSlot: 'Today 7PM',
+    image: 'https://images.unsplash.com/photo-1463453091185-61582044d556?w=800&h=900&fit=crop&auto=format&q=80',
+    verified: true, badge: 'independent',
+    tagline: 'International marathon qualifier specialist',
+    about: "Kiran Badiger is an independent distance running coach focused on guiding recreational and competitive runners toward international marathon qualifier standards. His methodical approach emphasises aerobic base building, threshold training, and race-day execution.",
+    achievements: ['9 athletes qualified for international marathon majors', 'Berlin Marathon qualifier specialist', 'Coached runners in Tokyo, Chicago, and London majors', 'Former Karnataka State Cross Country runner'],
+    certifications: ['AFI Club Coach Certificate', 'Distance Running Specialist – AIMS Certified', 'Sports Nutrition Fundamentals', 'Mental Performance Coaching Basics'],
+    services: [
+      { title: 'International Qualifier Plan', duration: '20 weeks', price: '₹9,800', desc: 'Target-specific plan to achieve BQ/Berlin/Tokyo qualifier standards with progressive long runs.' },
+      { title: 'Aerobic Base Camp', duration: '8 weeks', price: '₹5,200', desc: 'Foundation block with Z2 runs, strides and mobility for injury-free base building.' },
+      { title: 'Race Strategy Session', duration: '45 min', price: '₹1,500', desc: 'Pre-race briefing covering pacing, nutrition, weather adjustment, and mental tactics.' },
+    ],
+    slots: [
+      { date: 'Today', day: 'Thu', num: 3, times: ['7:00 PM', '8:00 PM'] },
+      { date: 'Sat', day: 'Sat', num: 5, times: ['6:00 AM', '7:30 AM', '9:00 AM'] },
+      { date: 'Sun', day: 'Sun', num: 6, times: ['6:00 AM', '8:00 AM'] },
+      { date: 'Tue', day: 'Tue', num: 8, times: ['7:00 PM', '8:30 PM'] },
+    ],
+    reviewList: [
+      { user: 'Mohan K.', rating: 5, comment: "Got my BQ with Kiran's plan. He understood exactly what time I was targeting.", date: '2 weeks ago' },
+      { user: 'Smitha L.', rating: 4, comment: "Great race strategy sessions. His Tokyo qualifier plan was very well structured.", date: '1 month ago' },
+      { user: 'Arjun N.', rating: 5, comment: "Finally achieved sub-3:30 after 2 years of trying. Kiran's method works.", date: '1 month ago' },
+    ],
+  },
+  '4': {
+    id: 4, name: 'Pramod Deshpande', role: 'Core Team, Jayanagar Jaguars', experience: '11 yrs',
+    rating: 4.8, reviews: 289, sessionsCompleted: 980, price: '₹1,600/hr', nextSlot: 'Wed 6AM',
+    image: 'https://images.unsplash.com/photo-1552058544-f2b08422138a?w=800&h=900&fit=crop&auto=format&q=80',
+    verified: true, badge: 'independent',
+    tagline: 'Jayanagar Jaguars core coach · Group running specialist',
+    about: "Pramod Deshpande is a core coaching member of Jayanagar Jaguars, one of Bangalore's best-known and most active running communities. With 11 years of experience in group coaching and community running, Pramod specialises in building consistent training habits and fostering a strong running culture.",
+    achievements: ['Core coach of Jayanagar Jaguars since 2015', 'Led 500+ group long runs across Bangalore', 'Developed marathon training plans for 200+ runners', '3 runners from JJ placed in top 10 at TCS World 10K'],
+    certifications: ['AFI Club Coach Certified', 'Group Fitness Instructor – ACE', 'Running Biomechanics Workshop – Bangalore Athletics', 'Community Coach Recognition Award 2022'],
+    services: [
+      { title: 'Group Morning Run', duration: '90 min', price: '₹500/session', desc: 'Structured group long run with pacing guidance, hydration stops and form cues.' },
+      { title: '10K to Half-Marathon Block', duration: '10 weeks', price: '₹4,500', desc: 'Progressive block to bridge 10K runners into half-marathon readiness.' },
+      { title: 'Personal Coaching Session', duration: '60 min', price: '₹1,600', desc: 'One-on-one analysis, goal setting, and next-step planning for your running journey.' },
+    ],
+    slots: [
+      { date: 'Wed', day: 'Wed', num: 9, times: ['6:00 AM', '7:00 AM'] },
+      { date: 'Sat', day: 'Sat', num: 5, times: ['5:30 AM', '6:30 AM', '7:30 AM'] },
+      { date: 'Sun', day: 'Sun', num: 6, times: ['5:30 AM', '6:30 AM'] },
+    ],
+    reviewList: [
+      { user: 'Vikram A.', rating: 5, comment: "Pramod's group runs are the highlight of my week. Best running community in Bangalore.", date: '1 week ago' },
+      { user: 'Lakshmi S.', rating: 5, comment: "His 10K to half-marathon plan is solid. Completed my first half feeling strong!", date: '2 weeks ago' },
+      { user: 'Rohan T.', rating: 4, comment: "Very encouraging and experienced. The group dynamic really helps on tough days.", date: '1 month ago' },
+    ],
+  },
+  '5': {
+    id: 5, name: 'Nakul Butta', role: 'Founder, All In Running', experience: '10 yrs',
+    rating: 4.9, reviews: 197, sessionsCompleted: 740, price: '₹2,000/hr', nextSlot: 'Fri 7AM',
+    image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=800&h=900&fit=crop&auto=format&q=80',
+    verified: true, badge: 'independent',
+    tagline: 'All In Running · Strength + Yoga integrated coaching',
+    about: "Nakul Butta founded All In Running on the belief that endurance performance can be unlocked by integrating strength training and yoga alongside traditional run coaching. His holistic approach reduces injury rates while building the power and flexibility needed for faster, more consistent running.",
+    achievements: ['Founder, All In Running platform', '14 athletes with marathon PBs in 2024', 'Yoga for Runners specialist certification', 'Strength training integration pioneer in Bangalore running scene'],
+    certifications: ['USATF Level 1 Certified', 'Yoga Alliance RYT-200', 'NSCA Certified Strength & Conditioning Specialist', 'Sports Rehabilitation Basics – ISAK'],
+    services: [
+      { title: 'Integrated Run + Strength Block', duration: '12 weeks', price: '₹9,200', desc: 'Holistic programme combining 4 run sessions with 2 strength sessions per week, yoga cool-downs included.' },
+      { title: 'Yoga for Runners Workshop', duration: '90 min', price: '₹1,200', desc: 'Targeted yoga session for hip flexors, hamstrings and glutes with runner-specific flows.' },
+      { title: 'Strength Assessment', duration: '60 min', price: '₹2,000', desc: 'Identify muscular imbalances affecting your running economy with corrective exercise prescription.' },
+    ],
+    slots: [
+      { date: 'Fri', day: 'Fri', num: 4, times: ['7:00 AM', '8:30 AM', '6:00 PM'] },
+      { date: 'Sat', day: 'Sat', num: 5, times: ['7:00 AM', '9:00 AM'] },
+      { date: 'Mon', day: 'Mon', num: 7, times: ['6:30 AM', '5:30 PM', '7:00 PM'] },
+      { date: 'Wed', day: 'Wed', num: 9, times: ['6:30 AM', '7:30 AM'] },
+    ],
+    reviewList: [
+      { user: 'Nidhi K.', rating: 5, comment: "The strength + run integration is a game changer. Zero injuries in 6 months of training.", date: '4 days ago' },
+      { user: 'Suresh M.', rating: 5, comment: "Nakul's yoga sessions are mandatory in my training now. Completely reduced my tightness.", date: '2 weeks ago' },
+      { user: 'Priya G.', rating: 4, comment: "Very balanced approach. It's not just about running more, it's about running smarter.", date: '1 month ago' },
     ],
   },
 };
@@ -81,22 +160,15 @@ export default function StoreCoachProfile() {
   const currentSlot = coach.slots[selectedDateIdx];
 
   return (
-    <div className="bg-black w-full flex justify-center h-screen">
+    <div className="bg-black w-full flex justify-center min-h-screen">
       <div className="w-full max-w-[390px] bg-[#0b0b0f] relative flex flex-col min-h-screen">
 
-        {/* ─── HERO ─────────────────────────────────────────── */}
-        <div className="relative flex-shrink-0" style={{ height: 250 }}>
-          <img
-            src={coach.image}
-            alt={coach.name}
-            className="w-full h-full object-cover object-top"
-          />
-          {/* layered gradients for depth */}
+        {/* HERO */}
+        <div className="relative flex-shrink-0" style={{ height: 320 }}>
+          <img src={coach.image} alt={coach.name} className="w-full h-full object-cover object-top" />
           <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, transparent 35%, rgba(11,11,15,0.7) 70%, #0b0b0f 100%)' }} />
-          {/* subtle vignette sides */}
           <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.4) 100%)' }} />
 
-          {/* top bar */}
           <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-4 pt-12">
             <button
               onClick={() => navigate(-1)}
@@ -117,31 +189,28 @@ export default function StoreCoachProfile() {
                 className="w-[38px] h-[38px] rounded-full backdrop-blur-md flex items-center justify-center"
                 style={{ background: 'rgba(0,0,0,0.45)', border: '1px solid rgba(255,255,255,0.14)' }}
               >
-                <Bookmark
-                  className="w-[15px] h-[15px]"
-                  style={{ color: saved ? '#c9115f' : 'white', fill: saved ? '#c9115f' : 'none' }}
-                />
+                <Bookmark className="w-[15px] h-[15px]" style={{ color: saved ? '#c9115f' : 'white', fill: saved ? '#c9115f' : 'none' }} />
               </button>
             </div>
           </div>
 
-          {/* name + role on hero */}
           <div className="absolute bottom-0 left-0 right-0 px-4 pb-5">
-            <div className="flex items-center gap-2 mb-1">
+            <div className="flex items-center gap-2 mb-1 flex-wrap">
               <h1 className="text-white text-[26px] font-bold leading-none">{coach.name}</h1>
               {coach.verified && (
                 <div className="w-[22px] h-[22px] rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'linear-gradient(135deg,#c9115f,#cd620e)' }}>
                   <span className="text-white text-[10px] font-bold">✓</span>
                 </div>
               )}
+              <CoachBadge type={coach.badge} />
             </div>
             <p className="text-[rgba(255,255,255,0.65)] text-[13px]">{coach.role}</p>
             <p className="text-[rgba(255,255,255,0.45)] text-[11px] mt-0.5">{coach.tagline}</p>
           </div>
         </div>
 
-        {/* ─── STATS STRIP ──────────────────────────────────── */}
-        <div className="mx-4 mt-1 mb-4 rounded-[18px] overflow-hidden" style={{ background: 'linear-gradient(135deg,rgba(201,17,95,0.18),rgba(205,98,14,0.18))', border: '1px solid rgba(255,255,255,0.08)' }}>
+        {/* STATS STRIP */}
+        <div className="mx-4 -mt-1 mb-4 rounded-[18px] overflow-hidden" style={{ background: 'linear-gradient(135deg,rgba(201,17,95,0.18),rgba(205,98,14,0.18))', border: '1px solid rgba(255,255,255,0.08)' }}>
           <div className="flex divide-x divide-[rgba(255,255,255,0.08)]">
             {[
               { label: 'Rating', value: `${coach.rating}★`, sub: `${coach.reviews} reviews` },
@@ -156,10 +225,10 @@ export default function StoreCoachProfile() {
           </div>
         </div>
 
-        {/* ─── SCROLLABLE BODY ──────────────────────────────── */}
-        <div className="flex-1 overflow-y-auto pb-40 no-scrollbar">
+        {/* SCROLLABLE BODY */}
+        <div className="flex-1 overflow-y-auto pb-[96px] no-scrollbar">
 
-          {/* ── Date Picker ─────────────────────────────────── */}
+          {/* Date Picker */}
           <div className="mb-5">
             <div className="flex items-center justify-between px-4 mb-3">
               <p className="text-white text-[14px] font-bold">Select Date</p>
@@ -194,7 +263,7 @@ export default function StoreCoachProfile() {
             </div>
           </div>
 
-          {/* ── Time Picker ─────────────────────────────────── */}
+          {/* Time Picker */}
           <div className="mb-6 px-4">
             <p className="text-white text-[14px] font-bold mb-3">Select Time</p>
             <div className="flex flex-wrap gap-2">
@@ -219,8 +288,8 @@ export default function StoreCoachProfile() {
             </div>
           </div>
 
-          {/* ── Services ────────────────────────────────────── */}
-          {/* <div className="mb-6 px-4">
+          {/* Services */}
+          <div className="mb-6 px-4">
             <p className="text-white text-[14px] font-bold mb-3">Choose Service</p>
             <div className="flex flex-col gap-2.5">
               {coach.services.map((svc, i) => {
@@ -257,9 +326,9 @@ export default function StoreCoachProfile() {
                 );
               })}
             </div>
-          </div> */}
+          </div>
 
-          {/* ── About ───────────────────────────────────────── */}
+          {/* About */}
           <div className="mb-6 px-4">
             <p className="text-white text-[14px] font-bold mb-2">About</p>
             <p className={`text-[#a8a8b8] text-[13px] leading-relaxed ${!expandedAbout ? 'line-clamp-3' : ''}`}>
@@ -274,16 +343,12 @@ export default function StoreCoachProfile() {
             </button>
           </div>
 
-          {/* ── Achievements ────────────────────────────────── */}
+          {/* Achievements */}
           <div className="mb-6 px-4">
             <p className="text-white text-[14px] font-bold mb-3">Achievements</p>
             <div className="grid grid-cols-2 gap-2">
               {coach.achievements.map((a, i) => (
-                <div
-                  key={i}
-                  className="rounded-[12px] p-3 flex items-start gap-2"
-                  style={{ background: 'rgba(201,17,95,0.07)', border: '1px solid rgba(201,17,95,0.16)' }}
-                >
+                <div key={i} className="rounded-[12px] p-3 flex items-start gap-2" style={{ background: 'rgba(201,17,95,0.07)', border: '1px solid rgba(201,17,95,0.16)' }}>
                   <Award className="w-[13px] h-[13px] flex-shrink-0 mt-0.5" style={{ color: '#c9115f' }} />
                   <p className="text-[#d8d8e8] text-[11px] leading-snug">{a}</p>
                 </div>
@@ -291,7 +356,7 @@ export default function StoreCoachProfile() {
             </div>
           </div>
 
-          {/* ── Certifications ──────────────────────────────── */}
+          {/* Certifications */}
           <div className="mb-6 px-4">
             <p className="text-white text-[14px] font-bold mb-3">Certifications</p>
             <div className="flex flex-col gap-2">
@@ -304,7 +369,7 @@ export default function StoreCoachProfile() {
             </div>
           </div>
 
-          {/* ── Reviews ─────────────────────────────────────── */}
+          {/* Reviews */}
           <div className="mb-6 px-4">
             <div className="flex items-center justify-between mb-3">
               <p className="text-white text-[14px] font-bold">Reviews</p>
@@ -344,7 +409,7 @@ export default function StoreCoachProfile() {
           </div>
         </div>
 
-        {/* ─── STICKY BOOK SESSION ──────────────────────────── */}
+        {/* STICKY BOOK SESSION */}
         <div
           className="absolute bottom-0 left-0 right-0 px-4 py-3"
           style={{ background: 'linear-gradient(to top, #0b0b0f 80%, transparent)', borderTop: '1px solid rgba(255,255,255,0.07)' }}
@@ -353,7 +418,7 @@ export default function StoreCoachProfile() {
             <div className="flex items-center gap-2 mb-2.5 px-1">
               <Clock className="w-[12px] h-[12px]" style={{ color: '#00c864' }} />
               <span className="text-[12px] text-[#00c864] font-medium">
-                {currentSlot.date === 'Today' ? 'Today' : `${currentSlot.day} ${currentSlot.num} Jun`} · {selectedTime}
+                {currentSlot.date === 'Today' ? 'Today' : `${currentSlot.day} ${currentSlot.num} Jul`} · {selectedTime}
               </span>
               <span className="text-[#4a4a5a] text-[11px]">·</span>
               <span className="text-[#99A1AF] text-[11px]">{coach.services[selectedService].title}</span>
@@ -362,32 +427,18 @@ export default function StoreCoachProfile() {
           <div className="flex items-center gap-3">
             <div>
               <p className="text-[#99A1AF] text-[11px]">From</p>
-              <p
-                className="text-[18px] font-bold leading-none"
-                style={{
-                  background: 'linear-gradient(135deg,#c9115f,#cd620e)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                }}
-              >
+              <p className="text-[18px] font-bold leading-none" style={{ background: 'linear-gradient(135deg,#c9115f,#cd620e)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                 {coach.services[selectedService].price}
               </p>
             </div>
-
             <button
               className="flex-1 rounded-full py-3.5 text-white text-[15px] font-bold flex items-center justify-center gap-2 transition-all"
               style={{
-                background: selectedTime
-                  ? 'linear-gradient(135deg,#c9115f,#cd620e)'
-                  : 'rgba(255,255,255,0.1)',
-                boxShadow: selectedTime
-                  ? '0 0 22px rgba(201,17,95,0.5)'
-                  : 'none',
+                background: selectedTime ? 'linear-gradient(135deg,#c9115f,#cd620e)' : 'rgba(255,255,255,0.1)',
+                boxShadow: selectedTime ? '0 0 22px rgba(201,17,95,0.5)' : 'none',
                 opacity: selectedTime ? 1 : 0.6,
               }}
-              onClick={() =>
-                selectedTime && navigate(`/store/booking/${id || '1'}`)
-              }
+              onClick={() => selectedTime && navigate(`/store/booking/${id || '1'}`)}
             >
               <Zap className="w-[15px] h-[15px] fill-white" />
               {selectedTime ? 'Book Session' : 'Select a time slot'}

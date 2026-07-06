@@ -27,6 +27,16 @@ import StoreMyBookings from "@/pages/Store/StoreMyBookings";
 import StoreReview from "@/pages/Store/StoreReview";
 import AFIProfile from "@/pages/AFIProfile/AFIProfile";
 import ArticleDetails from "@/pages/ArticleScreen/ArticleScreen";
+import StoreExperiences from "@/pages/Store/StoreExperiences"
+import StoreSessionRequests from "@/pages/Store/StoreSessionRequests"
+import StoreAthleteMarketplace from "@/pages/Store/StoreAthleteMarketplace"
+import StoreMemorabilia from "@/pages/Store/StoreMemorabilia"
+import StoreAuctions from "@/pages/Store/StoreAuctions"
+import StoreBrands from "@/pages/Store/StoreBrands"
+import StoreDigital from "@/pages/Store/StoreDigital"
+import StoreMemberships from "@/pages/Store/StoreMemberships"
+import StoreAIDolly from "@/pages/Store/StoreAIDolly"
+import StoreTicketedEvents from "@/pages/Store/StoreTicketedEvents"
 
 export const router = createBrowserRouter([
   {
@@ -60,6 +70,16 @@ export const router = createBrowserRouter([
       { path: "/store/booking-success/:id", Component: StoreBookingSuccess },
       { path: "/store/my-bookings", Component: StoreMyBookings },
       { path: "/store/review/:id", Component: StoreReview },
+      { path: "/store/experiences", Component: StoreExperiences },
+      { path: "/store/session-requests", Component: StoreSessionRequests },
+      { path: "/store/athletes", Component: StoreAthleteMarketplace },
+      { path: "/store/memorabilia", Component: StoreMemorabilia },
+      { path: "/store/auctions", Component: StoreAuctions },
+      { path: "/store/brands", Component: StoreBrands },
+      { path: "/store/digital", Component: StoreDigital },
+      { path: "/store/memberships", Component: StoreMemberships },
+      { path: "/store/dolly", Component: StoreAIDolly },
+      { path: "/store/ticketed-events", Component: StoreTicketedEvents },
       { path: "/athlete/afi", Component: AFIProfile },
       { path: "/articles/:id", Component: ArticleDetails },
     ],

@@ -80,7 +80,7 @@ export default function StoreFeaturedServices() {
   const navigate = useNavigate();
 
   return (
-    <div className="bg-black w-full flex justify-center h-screen">
+    <div className="bg-black w-full flex justify-center min-h-screen">
       <div className="w-full max-w-[390px] bg-[#0b0b0f] relative flex flex-col min-h-screen">
         {/* Header */}
         <div className="sticky top-0 z-50 bg-[#0b0b0f] border-b border-[rgba(255,255,255,0.05)] h-[56px] flex items-center px-4 gap-3">
@@ -97,7 +97,7 @@ export default function StoreFeaturedServices() {
         </div>
 
         {/* Cards */}
-        <div className="flex-1 overflow-y-auto pb-18 no-scrollbar">
+        <div className="flex-1 overflow-y-auto pb-6 no-scrollbar">
           <div className="flex flex-col gap-4 px-4 pt-4">
             {featuredServices.map((service) => (
               <button

@@ -1,87 +1,94 @@
 import { useNavigate } from 'react-router';
-import { ArrowLeft, Search, Star, Clock, Filter, Bookmark, SlidersHorizontal } from 'lucide-react';
+import { ArrowLeft, Search, Star, Clock, Bookmark } from 'lucide-react';
 import { useState } from 'react';
+import { CoachBadge } from './Store';
 
 const filterChips = ['Availability', 'Price', 'Rating', 'Experience', 'Language'];
 
 const coaches = [
   {
     id: 1,
-    name: 'Ravi Singh',
-    role: 'Head Athletics Coach',
-    experience: '15 yrs exp',
+    name: 'Anubhav Karmakar',
+    role: 'Founder, Athloft Multisport',
+    experience: '12 yrs exp',
     rating: 4.9,
-    reviews: 312,
-    price: '₹1,800/hr',
-    nextSlot: 'Today 4PM',
-    specializations: ['Javelin', 'Shot Put', 'Discus'],
-    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&h=120&fit=crop&auto=format',
+    reviews: 218,
+    price: '₹2,200/hr',
+    nextSlot: 'Today 5PM',
+    specializations: ['Marathon', 'IronMan', 'Triathlon', 'Global Majors'],
+    image: 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=120&h=120&fit=crop&auto=format',
     verified: true,
+    badge: 'independent' as const,
   },
   {
     id: 2,
-    name: 'Priya Sharma',
-    role: 'Sports Nutritionist',
-    experience: '10 yrs exp',
+    name: 'Vikas Srinivasan',
+    role: 'Founder, Runpundit',
+    experience: '14 yrs exp',
     rating: 4.8,
-    reviews: 278,
-    price: '₹1,200/hr',
-    nextSlot: 'Tomorrow 10AM',
-    specializations: ['Diet Planning', 'Recovery', 'Weight'],
-    image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&h=120&fit=crop&auto=format',
+    reviews: 342,
+    price: '₹1,800/hr',
+    nextSlot: 'Tomorrow 9AM',
+    specializations: ['5K to Ultra', 'Marathon', 'Online Coaching'],
+    image: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=120&h=120&fit=crop&auto=format',
     verified: true,
+    badge: 'independent' as const,
   },
   {
     id: 3,
-    name: 'Arun Kumar',
-    role: 'Sprint & Speed Coach',
-    experience: '12 yrs exp',
+    name: 'Kiran Badiger',
+    role: 'Distance Running Coach',
+    experience: '9 yrs exp',
     rating: 4.7,
-    reviews: 194,
-    price: '₹2,100/hr',
-    nextSlot: 'Today 6PM',
-    specializations: ['100m', '200m', 'Relay'],
-    image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&h=120&fit=crop&auto=format',
-    verified: false,
+    reviews: 156,
+    price: '₹1,500/hr',
+    nextSlot: 'Today 7PM',
+    specializations: ['Distance Running', 'Marathon', 'Intl. Qualifiers'],
+    image: 'https://images.unsplash.com/photo-1463453091185-61582044d556?w=120&h=120&fit=crop&auto=format',
+    verified: true,
+    badge: 'independent' as const,
   },
   {
     id: 4,
-    name: 'Sneha Patel',
-    role: 'Strength & Conditioning',
-    experience: '8 yrs exp',
-    rating: 4.9,
-    reviews: 445,
-    price: '₹2,500/hr',
-    nextSlot: 'Thu 2PM',
-    specializations: ['Strength', 'Conditioning', 'Mobility'],
-    image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=120&h=120&fit=crop&auto=format',
+    name: 'Pramod Deshpande',
+    role: 'Core Team, Jayanagar Jaguars',
+    experience: '11 yrs exp',
+    rating: 4.8,
+    reviews: 289,
+    price: '₹1,600/hr',
+    nextSlot: 'Wed 6AM',
+    specializations: ['Running Groups', 'Distance', 'Community Training'],
+    image: 'https://images.unsplash.com/photo-1552058544-f2b08422138a?w=120&h=120&fit=crop&auto=format',
     verified: true,
+    badge: 'independent' as const,
   },
   {
     id: 5,
-    name: 'Vikram Singh',
-    role: 'Long Jump Specialist',
-    experience: '18 yrs exp',
-    rating: 4.8,
-    reviews: 521,
-    price: '₹3,000/hr',
-    nextSlot: 'Fri 11AM',
-    specializations: ['Long Jump', 'Triple Jump', 'Speed'],
-    image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=120&h=120&fit=crop&auto=format',
+    name: 'Nakul Butta',
+    role: 'Founder, All In Running',
+    experience: '10 yrs exp',
+    rating: 4.9,
+    reviews: 197,
+    price: '₹2,000/hr',
+    nextSlot: 'Fri 7AM',
+    specializations: ['Distance Running', 'Strength Training', 'Yoga Integration'],
+    image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=120&h=120&fit=crop&auto=format',
     verified: true,
+    badge: 'independent' as const,
   },
   {
     id: 6,
-    name: 'Ananya Bose',
-    role: 'Yoga & Recovery Coach',
-    experience: '6 yrs exp',
+    name: 'Deepa Nair',
+    role: 'Endurance & Recovery Coach',
+    experience: '7 yrs exp',
     rating: 4.6,
-    reviews: 167,
-    price: '₹900/hr',
-    nextSlot: 'Today 8PM',
-    specializations: ['Recovery', 'Flexibility', 'Mindfulness'],
+    reviews: 132,
+    price: '₹1,200/hr',
+    nextSlot: 'Thu 8AM',
+    specializations: ['Recovery', 'Endurance', 'Injury Prevention'],
     image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=120&h=120&fit=crop&auto=format',
-    verified: false,
+    verified: true,
+    badge: 'independent' as const,
   },
 ];
 
@@ -111,9 +118,6 @@ export default function StoreCoachListing() {
               <h1 className="text-white font-bold text-[17px]">All Coaches & Experts</h1>
               <p className="text-[#99A1AF] text-[11px]">50+ verified professionals</p>
             </div>
-            <button className="w-[36px] h-[36px] rounded-full bg-[rgba(255,255,255,0.06)] flex items-center justify-center">
-              
-            </button>
           </div>
 
           {/* Search */}
@@ -131,18 +135,33 @@ export default function StoreCoachListing() {
           {/* Filter Chips */}
           <div className="flex gap-2 overflow-x-auto no-scrollbar px-4 pb-3">
             {filterChips.map((chip) => (
-              null
+              <button
+                key={chip}
+                onClick={() => setActiveFilter(chip)}
+                className="flex-shrink-0 px-3 py-1 rounded-full text-[11px] font-semibold transition-all border"
+                style={activeFilter === chip ? {
+                  background: 'linear-gradient(135deg,#c9115f,#cd620e)',
+                  border: '1px solid transparent',
+                  color: 'white',
+                } : {
+                  background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  color: '#99A1AF',
+                }}
+              >
+                {chip}
+              </button>
             ))}
           </div>
         </div>
 
         {/* Coach Cards */}
-        <div className="flex-1 overflow-y-auto pb-6 no-scrollbar">
+        <div className="flex-1 overflow-y-auto pb-[70px] no-scrollbar">
           <div className="flex flex-col gap-3 px-4 pt-4">
             {coaches.map((coach) => (
-              <button
+              <div
                 key={coach.id}
-                className="w-full bg-[#111116] rounded-[18px] border border-[rgba(255,255,255,0.07)] overflow-hidden text-left active:scale-[0.98] transition-transform"
+                className="w-full bg-[#111116] rounded-[18px] border border-[rgba(255,255,255,0.07)] overflow-hidden text-left active:scale-[0.98] transition-transform cursor-pointer"
                 onClick={() => navigate(`/store/coach/${coach.id}`)}
               >
                 <div className="p-4">
@@ -162,13 +181,16 @@ export default function StoreCoachListing() {
                     {/* Info */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between">
-                        <div>
+                        <div className="flex-1 min-w-0">
                           <p className="text-white text-[15px] font-bold">{coach.name}</p>
                           <p className="text-[#99A1AF] text-[12px]">{coach.role}</p>
+                          <div className="mt-1">
+                            <CoachBadge type={coach.badge} />
+                          </div>
                         </div>
                         <button
                           onClick={(e) => toggleSave(coach.id, e)}
-                          className="w-[32px] h-[32px] rounded-full bg-[rgba(255,255,255,0.06)] flex items-center justify-center flex-shrink-0"
+                          className="w-[32px] h-[32px] rounded-full bg-[rgba(255,255,255,0.06)] flex items-center justify-center flex-shrink-0 ml-2"
                         >
                           <Bookmark
                             className="w-[14px] h-[14px]"
@@ -212,7 +234,7 @@ export default function StoreCoachListing() {
                     </div>
                   </div>
                 </div>
-              </button>
+              </div>
             ))}
           </div>
         </div>

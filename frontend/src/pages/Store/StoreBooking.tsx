@@ -10,7 +10,7 @@ const services = [
 
 
 const coachNames: Record<string, string> = {
-  '1': 'Ravi Singh',
+  '1': 'Ravi Shastri',
   '2': 'Priya Sharma',
   '3': 'Arun Kumar',
   '4': 'Sneha Patel',
@@ -21,7 +21,7 @@ const stepLabels = ['Service', 'Review'];
 export default function StoreBooking() {
   const navigate = useNavigate();
   const { id } = useParams();
-  const coachName = coachNames[id || '1'] || 'Ravi Singh';
+  const coachName = coachNames[id || '1'] || 'Ravi Shastri';
 
   const [step, setStep] = useState(0);
   const [selectedService, setSelectedService] = useState<number | null>(null);
@@ -53,8 +53,8 @@ export default function StoreBooking() {
   };
 
   return (
-    <div className="bg-black w-full flex justify-center h-screen">
-      <div className="w-full overflow-y-scroll pb-25 no-scrollbar max-w-[390px] bg-[#0b0b0f] relative flex flex-col min-h-screen">
+    <div className="bg-black w-full flex justify-center min-h-screen">
+      <div className="w-full max-w-[390px] bg-[#0b0b0f] relative flex flex-col min-h-screen">
         {/* Header */}
         <div className="sticky top-0 z-50 bg-[#0b0b0f] border-b border-[rgba(255,255,255,0.05)]">
           <div className="h-[56px] flex items-center px-4 gap-3">
@@ -96,7 +96,7 @@ export default function StoreBooking() {
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto pb-18 no-scrollbar">
+        <div className="flex-1 overflow-y-auto pb-[88px] no-scrollbar">
           {/* Step 0: Select Service */}
           {step === 0 && (
             <div className="px-4 pt-5">
@@ -244,7 +244,7 @@ export default function StoreBooking() {
         </div>
 
         {/* Sticky CTA */}
-        <div className="absolute bottom-12 left-0 right-0 bg-[#0b0b0f] border-t border-[rgba(255,255,255,0.07)] px-4 py-3">
+        <div className="absolute bottom-0 left-0 right-0 bg-[#0b0b0f] border-t border-[rgba(255,255,255,0.07)] px-4 py-3">
           <button
             disabled={!canProceed}
             onClick={handleNext}

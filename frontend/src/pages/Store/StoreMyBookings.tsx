@@ -1,11 +1,12 @@
 import { useNavigate } from 'react-router';
+
 import { ArrowLeft, Calendar, Clock, ChevronRight, Star } from 'lucide-react';
 import { useState } from 'react';
 
 const upcomingBookings = [
   {
     id: 1,
-    coach: 'Ravi Singh',
+    coach: 'Ravi Shastri',
     service: 'Technique Analysis',
     date: 'June 17, 2026',
     time: '4:00 PM',
@@ -103,7 +104,7 @@ export default function StoreMyBookings() {
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto pb-6 no-scrollbar px-4 pt-4">
+        <div className="flex-1 overflow-y-auto pb-[70px] no-scrollbar px-4 pt-4">
           {tab === 'upcoming' && (
             <div className="flex flex-col gap-3">
               {upcomingBookings.map((b) => (
@@ -225,6 +226,7 @@ export default function StoreMyBookings() {
           )}
         </div>
       </div>
+
     </div>
   );
 }

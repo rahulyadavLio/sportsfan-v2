@@ -15,7 +15,7 @@ const serviceData: Record<string, {
     whatYouGet: ['Video analysis of your jump with frame-by-frame feedback', 'Personalized approach run calibration', 'Takeoff board technique drills', 'Competition phase strategy & mental prep', 'Post-session written report with action plan'],
     coaches: [
       { id: 5, name: 'Vikram Singh', role: 'Long Jump Specialist', rating: 4.8, reviews: 521, price: '₹3,000/hr', nextSlot: 'Fri 11AM', image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=120&h=120&fit=crop&auto=format' },
-      { id: 1, name: 'Ravi Singh', role: 'Head Athletics Coach', rating: 4.9, reviews: 312, price: '₹1,800/hr', nextSlot: 'Today 4PM', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&h=120&fit=crop&auto=format' },
+      { id: 1, name: 'Ravi Shastri', role: 'Head Athletics Coach', rating: 4.9, reviews: 312, price: '₹1,800/hr', nextSlot: 'Today 4PM', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&h=120&fit=crop&auto=format' },
     ],
     packages: [
       { title: 'Single Session', duration: '60 min', price: '₹2,499', desc: 'One-on-one technique analysis and drills with video breakdown.' },
@@ -30,7 +30,7 @@ const serviceData: Record<string, {
     description: 'Learn the biomechanics of elite javelin throwing from coaches with national and international competition experience. From grip to release — every degree matters.',
     whatYouGet: ['Biomechanical throw analysis (slow-motion video)', 'Grip and wrist action correction', 'Run-up rhythm and crossover drills', 'Release angle optimization for max distance', 'Training plan for the next 4–6 weeks'],
     coaches: [
-      { id: 1, name: 'Ravi Singh', role: 'Head Athletics Coach', rating: 4.9, reviews: 312, price: '₹1,800/hr', nextSlot: 'Today 4PM', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&h=120&fit=crop&auto=format' },
+      { id: 1, name: 'Ravi Shastri', role: 'Head Athletics Coach', rating: 4.9, reviews: 312, price: '₹1,800/hr', nextSlot: 'Today 4PM', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&h=120&fit=crop&auto=format' },
       { id: 3, name: 'Arun Kumar', role: 'Sprint & Speed Coach', rating: 4.7, reviews: 194, price: '₹2,100/hr', nextSlot: 'Today 6PM', image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&h=120&fit=crop&auto=format' },
     ],
     packages: [
@@ -80,7 +80,7 @@ export default function StoreServiceDetail() {
   const service = serviceData[id || '1'] || defaultService;
 
   return (
-    <div className="bg-black w-full flex justify-center h-screen">
+    <div className="bg-black w-full flex justify-center min-h-screen">
       <div className="w-full max-w-[390px] bg-[#0b0b0f] relative flex flex-col min-h-screen">
         {/* Hero Image */}
         <div className="relative h-[220px] flex-shrink-0">
