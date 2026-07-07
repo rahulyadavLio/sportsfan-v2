@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router';
 import HomeScreen from './figma/HomeScreen-20-282';
 import { Bell, Star, User, Search, Sparkles } from 'lucide-react';
 import MaskGroup from '@/components/common/MaskGroup/MaskGroup';
+import StoreFeedSection from './figma/HomeStore';
 
 export default function HomeScreenWrapper() {
   const navigate = useNavigate();
@@ -96,6 +97,7 @@ export default function HomeScreenWrapper() {
           /* Remove top spacing from home screen */
           .home-scroll-wrap > div[data-name="Home screen"] {
             margin-top: -63px !important;
+            height: 1800px !important;
           }
         `}</style>
 
@@ -135,6 +137,23 @@ export default function HomeScreenWrapper() {
             Match Centre
           </button>
         </div>
+        <div
+          style={{
+
+            background:
+              "linear-gradient(to bottom, transparent, #0b0b0f)",
+          }}
+        />
+        <div
+          className="mx-4 mb-0 h-px"
+          style={{
+            background:
+              "linear-gradient(90deg, transparent, rgba(201,17,95,0.5), transparent)",
+          }}
+        />
+
+        {/* Store Highlights — at the end of the feed */}
+        <StoreFeedSection /> 
       </div>
     </div>
   );

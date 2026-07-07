@@ -2266,7 +2266,7 @@ function Container56() {
 function Container5() {
   return (
     <div
-      className="absolute h-[1633px] left-0 top-[156px] w-[390px]"
+      className="absolute left-0 top-[156px] w-full h-auto"
       data-name="Container"
     >
       <Container6 />
@@ -2763,6 +2763,7 @@ export default function HomeScreen() {
       <Container58 />
       
       <Container59 />
+
     </div>
   );
 }
