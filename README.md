@@ -1,5 +1,5 @@
 
-  # Sports analytics app wireframe
+  # SportsFan V2
 
   This is a code bundle for Sports analytics app wireframe. The original project is available at https://www.figma.com/design/6Spw8TKnUFHfksS3UJt0HD/Sports-analytics-app-wireframe.
 
