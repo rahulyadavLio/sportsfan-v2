@@ -1,7 +1,8 @@
 import { useNavigate } from 'react-router';
- 
 import { ArrowLeft, CheckCircle, Clock, Shield, ShoppingCart, ChevronRight, Video, FileText, Phone, Download } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { storeService } from '@/services/store.service';
+
 
 type GovernanceStatus = 'approved' | 'pending' | 'independent';
 
@@ -30,6 +31,7 @@ const governanceBadge: Record<GovernanceStatus, { label: string; color: string; 
 };
 
 function GovernanceTag({ status }: { status: GovernanceStatus }) {
+  if (status === 'pending') return null;
   const cfg = governanceBadge[status];
   return (
     <div
@@ -225,7 +227,21 @@ function AthleteStorefront({ athlete, onBack }: { athlete: typeof athletes[0]; o
 
 export default function StoreAthleteMarketplace() {
   const navigate = useNavigate();
-  const [selectedAthlete, setSelectedAthlete] = useState<typeof athletes[0] | null>(null);
+  const [selectedAthlete, setSelectedAthlete] = useState<any | null>(null);
+  const [athletesList, setAthletesList] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    storeService.getProducts('athletes')
+      .then((res) => {
+        setAthletesList(res);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error('Error fetching athletes:', err);
+        setLoading(false);
+      });
+  }, []);
 
   return (
     <div className="bg-black w-full flex justify-center min-h-screen">
@@ -253,37 +269,42 @@ export default function StoreAthleteMarketplace() {
               <p className="text-[#a8a8b8] text-[12px] leading-snug">All athlete listings require AFI approval. Revenue is split between the Platform, AFI, and the Athlete.</p>
             </div>
 
-            <div className="flex flex-col gap-4">
-              {athletes.map((athlete) => (
-                <button
-                  key={athlete.id}
-                  onClick={() => setSelectedAthlete(athlete)}
-                  className="w-full bg-[#111116] rounded-[18px] border border-[rgba(255,255,255,0.07)] overflow-hidden text-left active:scale-[0.98] transition-transform"
-                >
-                  <div className="relative h-[150px]">
-                    <img src={athlete.image} alt={athlete.name} className="w-full h-full object-cover" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#111116] to-transparent" />
-                    <div className="absolute bottom-3 left-4">
-                      <GovernanceTag status={athlete.governance} />
+            {loading ? (
+              <p className="text-center text-[#99A1AF] text-[12px] py-10">Loading athletes...</p>
+            ) : athletesList.length === 0 ? (
+              <p className="text-center text-[#99A1AF] text-[12px] py-10">No athletes found.</p>
+            ) : (
+              <div className="flex flex-col gap-4">
+                {athletesList.map((athlete) => (
+                  <button
+                    key={athlete.id}
+                    onClick={() => setSelectedAthlete(athlete)}
+                    className="w-full bg-[#111116] rounded-[18px] border border-[rgba(255,255,255,0.07)] overflow-hidden text-left active:scale-[0.98] transition-transform"
+                  >
+                    <div className="relative h-[150px]">
+                      <img src={athlete.image} alt={athlete.name} className="w-full h-full object-cover" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#111116] to-transparent" />
+                      <div className="absolute bottom-3 left-4">
+                        <GovernanceTag status={athlete.governance_state || athlete.governance || 'approved'} />
+                      </div>
                     </div>
-                  </div>
-                  <div className="p-4">
-                    <p className="text-white text-[16px] font-bold">{athlete.name}</p>
-                    <p className="text-[#99A1AF] text-[12px]">{athlete.discipline}</p>
-                    <div className="flex items-center justify-between mt-3">
-                      <span className="text-[#99A1AF] text-[11px]">{athlete.listings.length} items available</span>
-                      <span className="text-[#c9115f] text-[12px] font-semibold flex items-center gap-1">
-                        View store <ChevronRight className="w-[13px] h-[13px]" />
-                      </span>
+                    <div className="p-4">
+                      <p className="text-white text-[16px] font-bold">{athlete.name}</p>
+                      <p className="text-[#99A1AF] text-[12px]">{athlete.discipline}</p>
+                      <div className="flex items-center justify-between mt-3">
+                        <span className="text-[#99A1AF] text-[11px]">{(athlete.listings || []).length} items available</span>
+                        <span className="text-[#c9115f] text-[12px] font-semibold flex items-center gap-1">
+                          View store <ChevronRight className="w-[13px] h-[13px]" />
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                </button>
-              ))}
-            </div>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>
- 
     </div>
   );
 }

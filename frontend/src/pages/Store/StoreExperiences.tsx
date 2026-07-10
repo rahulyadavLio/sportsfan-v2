@@ -1,7 +1,8 @@
 import { useNavigate } from 'react-router';
- 
 import { ArrowLeft, Clock, Users, Star, Timer, ChevronRight, CheckCircle2, Minus, Plus, QrCode } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { storeService } from '@/services/store.service';
+
 
 const experiences = [
   {
@@ -201,7 +202,21 @@ function ExperienceDetail({ exp, onClose }: { exp: typeof experiences[0]; onClos
 
 export default function StoreExperiences() {
   const navigate = useNavigate();
-  const [selectedExp, setSelectedExp] = useState<typeof experiences[0] | null>(null);
+  const [selectedExp, setSelectedExp] = useState<any | null>(null);
+  const [experiencesList, setExperiencesList] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    storeService.getProducts('experiences')
+      .then((res) => {
+        setExperiencesList(res);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error('Error fetching experiences:', err);
+        setLoading(false);
+      });
+  }, []);
 
   return (
     <div className="bg-black w-full flex justify-center min-h-screen">
@@ -223,56 +238,61 @@ export default function StoreExperiences() {
           <ExperienceDetail exp={selectedExp} onClose={() => setSelectedExp(null)} />
         ) : (
           <div className="flex-1 overflow-y-auto pb-[70px] no-scrollbar">
-            <div className="flex flex-col gap-4 px-4 pt-4">
-              {experiences.map((exp) => (
-                <button
-                  key={exp.id}
-                  className="w-full bg-[#111116] rounded-[18px] border border-[rgba(255,255,255,0.07)] overflow-hidden text-left active:scale-[0.98] transition-transform"
-                  onClick={() => setSelectedExp(exp)}
-                >
-                  <div className="relative h-[160px]">
-                    <img src={exp.image} alt={exp.title} className="w-full h-full object-cover" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#111116] via-transparent to-transparent" />
-                    <div className="absolute top-3 left-3">
-                      <span className="text-white text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ backgroundColor: exp.tagColor }}>
-                        {exp.tag}
-                      </span>
-                    </div>
-                    {exp.countdown && (
-                      <div className="absolute top-3 right-3 flex items-center gap-1.5 bg-[rgba(0,0,0,0.7)] rounded-full px-2 py-1">
-                        <Timer className="w-[10px] h-[10px] text-[#FFD700]" />
-                        <span className="text-[#FFD700] text-[10px] font-bold">{exp.countdown}</span>
-                      </div>
-                    )}
-                  </div>
-                  <div className="p-4">
-                    <p className="text-white text-[15px] font-bold leading-snug">{exp.title}</p>
-                    <div className="flex items-center gap-4 mt-2">
-                      <div className="flex items-center gap-1.5">
-                        <Clock className="w-[11px] h-[11px] text-[#99A1AF]" />
-                        <span className="text-[#99A1AF] text-[11px]">{exp.duration}</span>
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <Users className="w-[11px] h-[11px]" style={{ color: exp.seatsLeft > 0 ? '#00c864' : '#6b7280' }} />
-                        <span className="text-[11px]" style={{ color: exp.seatsLeft > 0 ? '#00c864' : '#6b7280' }}>
-                          {exp.seatsLeft > 0 ? `${exp.seatsLeft}/${exp.totalSeats} seats left` : 'Sold out'}
+            {loading ? (
+              <p className="text-center text-[#99A1AF] text-[12px] py-10">Loading experiences...</p>
+            ) : experiencesList.length === 0 ? (
+              <p className="text-center text-[#99A1AF] text-[12px] py-10">No experiences available.</p>
+            ) : (
+              <div className="flex flex-col gap-4 px-4 pt-4">
+                {experiencesList.map((exp) => (
+                  <button
+                    key={exp.id}
+                    className="w-full bg-[#111116] rounded-[18px] border border-[rgba(255,255,255,0.07)] overflow-hidden text-left active:scale-[0.98] transition-transform"
+                    onClick={() => setSelectedExp(exp)}
+                  >
+                    <div className="relative h-[160px]">
+                      <img src={exp.image} alt={exp.title} className="w-full h-full object-cover" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#111116] via-transparent to-transparent" />
+                      <div className="absolute top-3 left-3">
+                        <span className="text-white text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ backgroundColor: exp.tagColor }}>
+                          {exp.tag}
                         </span>
                       </div>
+                      {exp.countdown && (
+                        <div className="absolute top-3 right-3 flex items-center gap-1.5 bg-[rgba(0,0,0,0.7)] rounded-full px-2 py-1">
+                          <Timer className="w-[10px] h-[10px] text-[#FFD700]" />
+                          <span className="text-[#FFD700] text-[10px] font-bold">{exp.countdown}</span>
+                        </div>
+                      )}
                     </div>
-                    <div className="flex items-center justify-between mt-3 pt-3 border-t border-[rgba(255,255,255,0.06)]">
-                      <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#c9115f] to-[#cd620e] text-[15px] font-bold">{exp.price}</span>
-                      <div className="flex items-center gap-1 text-[#c9115f] text-[12px] font-semibold">
-                        {exp.soldOut ? 'Join Waitlist' : 'Book now'} <ChevronRight className="w-[14px] h-[14px]" />
+                    <div className="p-4">
+                      <p className="text-white text-[15px] font-bold leading-snug">{exp.title}</p>
+                      <div className="flex items-center gap-4 mt-2">
+                        <div className="flex items-center gap-1.5">
+                          <Clock className="w-[11px] h-[11px] text-[#99A1AF]" />
+                          <span className="text-[#99A1AF] text-[11px]">{exp.duration}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <Users className="w-[11px] h-[11px]" style={{ color: exp.seatsLeft > 0 ? '#00c864' : '#6b7280' }} />
+                          <span className="text-[11px]" style={{ color: exp.seatsLeft > 0 ? '#00c864' : '#6b7280' }}>
+                            {exp.seatsLeft > 0 ? `${exp.seatsLeft}/${exp.totalSeats} seats left` : 'Sold out'}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between mt-3 pt-3 border-t border-[rgba(255,255,255,0.06)]">
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#c9115f] to-[#cd620e] text-[15px] font-bold">{exp.price}</span>
+                        <div className="flex items-center gap-1 text-[#c9115f] text-[12px] font-semibold">
+                          {exp.soldOut ? 'Join Waitlist' : 'Book now'} <ChevronRight className="w-[14px] h-[14px]" />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </button>
-              ))}
-            </div>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>
-      {/* <BottomNav active="store" /> */}
     </div>
   );
 }

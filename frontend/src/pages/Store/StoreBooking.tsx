@@ -1,45 +1,161 @@
 import { useNavigate, useParams } from 'react-router';
-import { ArrowLeft, Check, User, Tag, MapPin, Pencil, X } from 'lucide-react';
-import { useState } from 'react';
+import { ArrowLeft, Check, User, Tag, MapPin, Pencil, X, Clock, AlertCircle } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { storeService, Slot } from '@/services/store.service';
+import { formatPrice } from '@/utils/formatters';
 
 const services = [
-  { id: 1, title: 'Technique Analysis', duration: '60 min', price: '₹1,800', desc: 'Video-based biomechanical breakdown with actionable fixes.' },
-  { id: 2, title: 'Competition Preparation', duration: '90 min', price: '₹2,500', desc: 'Peak performance strategy session with mental prep and race-day plan.' },
-  { id: 3, title: 'Monthly Mentorship', duration: '4 sessions', price: '₹6,500', desc: 'Structured monthly coaching with progress tracking and personalized plan.' },
+  { id: 1, title: 'Technique Analysis', duration: '60 min', pricePaise: 180000, desc: 'Video-based biomechanical breakdown with actionable fixes.' },
+  { id: 2, title: 'Competition Preparation', duration: '90 min', pricePaise: 250000, desc: 'Peak performance strategy session with mental prep and race-day plan.' },
+  { id: 3, title: 'Monthly Mentorship', duration: '4 sessions', pricePaise: 650000, desc: 'Structured monthly coaching with progress tracking and personalized plan.' },
 ];
 
-
 const coachNames: Record<string, string> = {
-  '1': 'Ravi Shastri',
-  '2': 'Priya Sharma',
-  '3': 'Arun Kumar',
-  '4': 'Sneha Patel',
+  '1': 'Anubhav Karmakar',
+  '2': 'Vikas Srinivasan',
+  '3': 'Kiran Badiger',
+  '4': 'Pramod Deshpande',
 };
 
-const stepLabels = ['Service', 'Review'];
+const stepLabels = ['Service & Slot', 'Review'];
 
 export default function StoreBooking() {
   const navigate = useNavigate();
   const { id } = useParams();
-  const coachName = coachNames[id || '1'] || 'Ravi Shastri';
+  const coachIdStr = id || '1';
+  const coachName = coachNames[coachIdStr] || 'Anubhav Karmakar';
+
+  const queryParams = new URLSearchParams(window.location.search);
+  const serviceIndexParam = queryParams.get('serviceIndex');
+  const initialService = serviceIndexParam !== null ? Number(serviceIndexParam) + 1 : null;
 
   const [step, setStep] = useState(0);
-  const [selectedService, setSelectedService] = useState<number | null>(null);
+  const [selectedService, setSelectedService] = useState<number | null>(initialService);
+  const [slots, setSlots] = useState<Slot[]>([]);
+  const [selectedSlotId, setSelectedSlotId] = useState<string | null>(null);
+  const [coach, setCoach] = useState<any>(null);
+
+  // Timer state
+  const [lockExpiresAt, setLockExpiresAt] = useState<number | null>(null);
+  const [timeLeft, setTimeLeft] = useState<number>(0);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+
   const [coupon, setCoupon] = useState('');
   const [couponApplied, setCouponApplied] = useState(false);
   const [location, setLocation] = useState('Bengaluru, Karnataka');
   const [editingLocation, setEditingLocation] = useState(false);
   const [locationDraft, setLocationDraft] = useState('');
 
-  const selectedServiceData = services.find((s) => s.id === selectedService);
+  const passedDate = queryParams.get('date');
+  const passedTime = queryParams.get('time');
+  const passedDay = queryParams.get('day');
+  const passedNum = queryParams.get('num');
+
+  const coachServices = coach?.services 
+    ? coach.services.map((s: any, idx: number) => ({
+        id: idx + 1,
+        title: s.title,
+        duration: s.duration,
+        pricePaise: s.pricePaise || 0,
+        desc: s.desc
+      }))
+    : services;
+
+  const selectedServiceData = coachServices.find((s) => s.id === selectedService);
+  const selectedSlotData = slots.find((s) => s.id === selectedSlotId);
+
+  const displaySlotTime = passedDate && passedTime 
+    ? (passedDate === 'Today' ? `Today · ${passedTime}` : `${passedDay || ''} ${passedNum || ''} Jul · ${passedTime}`)
+    : (selectedSlotData?.time || '');
+
+  // Fetch slots and coach details on load
+  useEffect(() => {
+    storeService.getSlots(`coach-${coachIdStr}`)
+      .then((data) => {
+        // filter out booked slots
+        setSlots(data.filter(s => s.status !== 'booked'));
+      })
+      .catch((err) => console.error('Error fetching slots:', err));
+
+    storeService.getProductById(`coach-${coachIdStr}`)
+      .then((data) => {
+        setCoach(data);
+      })
+      .catch((err) => console.error('Error fetching coach details:', err));
+  }, [coachIdStr]);
+
+  // Auto-select and lock the passed slot
+  useEffect(() => {
+    if (slots.length > 0 && passedDate && passedTime && !selectedSlotId) {
+      const match = slots.find(s => {
+        const timeNormalized = s.time.toLowerCase().replace(/[:\s]/g, '');
+        const targetNormalized = `${passedDate}${passedTime}`.toLowerCase().replace(/[:\s]/g, '');
+        return timeNormalized === targetNormalized || s.time.toLowerCase().includes(passedTime.toLowerCase());
+      });
+      if (match) {
+        handleSelectSlot(match.id);
+      } else {
+        // Fallback: create mock ID
+        const fallbackId = `slot-${passedDate}-${passedTime.replace(/[:\s]/g, '-')}`;
+        setSelectedSlotId(fallbackId);
+      }
+    }
+  }, [slots, passedDate, passedTime]);
+
+  // Lock expiry timer count down
+  useEffect(() => {
+    if (lockExpiresAt) {
+      const updateTimer = () => {
+        const remaining = Math.max(0, Math.round((lockExpiresAt - Date.now()) / 1000));
+        setTimeLeft(remaining);
+        if (remaining <= 0) {
+          if (timerRef.current) clearInterval(timerRef.current);
+          if (selectedSlotId) {
+            storeService.unlockSlot(`coach-${coachIdStr}`, selectedSlotId, 'mock-user-123').catch(console.error);
+          }
+          setSelectedSlotId(null);
+          setLockExpiresAt(null);
+          alert('Your booking lock has expired. Redirecting you back to select the slot again.');
+          navigate(`/store/coach/${coachIdStr}`);
+        }
+      };
+
+      updateTimer();
+      timerRef.current = setInterval(updateTimer, 1000);
+
+      return () => {
+        if (timerRef.current) clearInterval(timerRef.current);
+      };
+    }
+  }, [lockExpiresAt, selectedSlotId, coachIdStr]);
+
+  const handleSelectSlot = async (slotId: string) => {
+    try {
+      const res = await storeService.lockSlot(`coach-${coachIdStr}`, slotId, 'mock-user-123');
+      setSelectedSlotId(slotId);
+      setLockExpiresAt(new Date(res.lockExpiresAt).getTime());
+    } catch (err: any) {
+      alert(err.message || 'Failed to lock slot');
+    }
+  };
+
+  const formatTimeLeft = (sec: number) => {
+    const m = Math.floor(sec / 60);
+    const s = sec % 60;
+    return `${m}:${s.toString().padStart(2, '0')}`;
+  };
 
   const canProceed =
-    (step === 0 && selectedService !== null) ||
+    (step === 0 && selectedService !== null && (selectedSlotId !== null || (passedDate && passedTime))) ||
     step === 1;
 
   const handleNext = () => {
-    if (step < 1) setStep((s) => s + 1);
-    else navigate(`/store/payment/${id || '1'}`);
+    if (step < 1) {
+      setStep((s) => s + 1);
+    } else {
+      // Navigate to checkout payment screen
+      navigate(`/store/payment/coach-${coachIdStr}?slotId=${selectedSlotId || `slot-${passedDate}-${passedTime?.replace(/[:\s]/g, '-')}`}&price=${getTotalPrice()}`);
+    }
   };
 
   const startEditLocation = () => {
@@ -50,6 +166,24 @@ export default function StoreBooking() {
   const saveLocation = () => {
     if (locationDraft.trim()) setLocation(locationDraft.trim());
     setEditingLocation(false);
+  };
+
+  const getServicePrice = () => {
+    return selectedServiceData ? selectedServiceData.pricePaise : 0;
+  };
+
+  const getPlatformFee = () => {
+    return 9900; // ₹99 in paise
+  };
+
+  const getCouponDiscount = () => {
+    if (!couponApplied) return 0;
+    // 20% discount on service fee
+    return Math.round(getServicePrice() * 0.20);
+  };
+
+  const getTotalPrice = () => {
+    return getServicePrice() + getPlatformFee() - getCouponDiscount();
   };
 
   return (
@@ -97,12 +231,22 @@ export default function StoreBooking() {
         </div>
 
         <div className="flex-1 overflow-y-auto pb-[88px] no-scrollbar">
-          {/* Step 0: Select Service */}
+          {/* Lock Countdown Banner */}
+          {lockExpiresAt && timeLeft > 0 && (
+            <div className="mx-4 mt-4 bg-[rgba(201,17,95,0.15)] border border-[rgba(201,17,95,0.3)] rounded-[12px] p-3 flex items-center gap-2 animate-pulse">
+              <Clock className="w-[16px] h-[16px] text-[#c9115f]" />
+              <span className="text-white text-[12px] font-semibold flex-1">
+                Your slot is held for: <span className="text-[#c9115f] font-black">{formatTimeLeft(timeLeft)}</span>
+              </span>
+            </div>
+          )}
+
+          {/* Step 0: Select Service & Slot */}
           {step === 0 && (
-            <div className="px-4 pt-5">
-              <p className="text-[#99A1AF] text-[13px] mb-4">Choose the type of session you want to book</p>
-              <div className="flex flex-col gap-3">
-                {services.map((svc) => (
+            <div className="px-4 pt-4">
+              <p className="text-[#99A1AF] text-[13px] mb-3">1. Choose a Coaching Service</p>
+              <div className="flex flex-col gap-3 mb-5">
+                {coachServices.map((svc) => (
                   <button
                     key={svc.id}
                     onClick={() => setSelectedService(svc.id)}
@@ -119,7 +263,9 @@ export default function StoreBooking() {
                         <p className="text-[#99A1AF] text-[12px] mt-2 leading-snug">{svc.desc}</p>
                       </div>
                       <div className="flex flex-col items-end gap-2">
-                        <p className="text-transparent bg-clip-text bg-gradient-to-r from-[#c9115f] to-[#cd620e] text-[15px] font-bold">{svc.price}</p>
+                        <p className="text-transparent bg-clip-text bg-gradient-to-r from-[#c9115f] to-[#cd620e] text-[15px] font-bold">
+                          {formatPrice(svc.pricePaise)}
+                        </p>
                         {selectedService === svc.id && (
                           <div className="w-[20px] h-[20px] rounded-full bg-gradient-to-br from-[#c9115f] to-[#cd620e] flex items-center justify-center">
                             <Check className="w-[11px] h-[11px] text-white" />
@@ -130,11 +276,13 @@ export default function StoreBooking() {
                   </button>
                 ))}
               </div>
+
+
             </div>
           )}
 
           {/* Step 1: Review */}
-          {step === 1 && selectedServiceData && (
+          {step === 1 && selectedServiceData && (selectedSlotData || (passedDate && passedTime)) && (
             <div className="px-4 pt-5">
               <p className="text-[#99A1AF] text-[13px] mb-4">Review your booking details before payment</p>
 
@@ -144,6 +292,7 @@ export default function StoreBooking() {
                   {[
                     { icon: User, label: 'Coach', value: coachName },
                     { icon: Tag, label: 'Service', value: selectedServiceData.title },
+                    { icon: Clock, label: 'Scheduled Time', value: displaySlotTime },
                   ].map(({ icon: Icon, label, value }) => (
                     <div key={label} className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
@@ -201,23 +350,23 @@ export default function StoreBooking() {
                 <div className="flex flex-col gap-2">
                   <div className="flex justify-between">
                     <span className="text-[#99A1AF] text-[13px]">Session Fee</span>
-                    <span className="text-white text-[13px]">{selectedServiceData.price}</span>
+                    <span className="text-white text-[13px]">{formatPrice(getServicePrice())}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-[#99A1AF] text-[13px]">Platform Fee</span>
-                    <span className="text-white text-[13px]">₹99</span>
+                    <span className="text-white text-[13px]">{formatPrice(getPlatformFee())}</span>
                   </div>
                   {couponApplied && (
                     <div className="flex justify-between">
                       <span className="text-[#00c864] text-[13px]">Coupon (SPORT20)</span>
-                      <span className="text-[#00c864] text-[13px]">-₹360</span>
+                      <span className="text-[#00c864] text-[13px]">-{formatPrice(getCouponDiscount())}</span>
                     </div>
                   )}
                   <div className="h-[1px] bg-[rgba(255,255,255,0.07)] my-1" />
                   <div className="flex justify-between">
                     <span className="text-white text-[14px] font-bold">Total</span>
                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#c9115f] to-[#cd620e] text-[16px] font-bold">
-                      {couponApplied ? '₹1,539' : selectedServiceData.price.replace(/₹(\d+),?(\d*)/, (_, a, b) => `₹${parseInt(a + b) + 99}`)}
+                      {formatPrice(getTotalPrice())}
                     </span>
                   </div>
                 </div>
@@ -232,13 +381,13 @@ export default function StoreBooking() {
                   className="flex-1 bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] rounded-[12px] px-4 py-2.5 text-white text-[13px] placeholder:text-[#99A1AF] focus:outline-none focus:border-[rgba(201,17,95,0.5)]"
                 />
                 <button
-                  onClick={() => { if (coupon.trim()) setCouponApplied(true); }}
+                  onClick={() => { if (coupon.trim().toUpperCase() === 'SPORT20') setCouponApplied(true); }}
                   className="px-4 py-2.5 bg-gradient-to-r from-[#c9115f] to-[#cd620e] rounded-[12px] text-white text-[13px] font-semibold"
                 >
                   Apply
                 </button>
               </div>
-              {couponApplied && <p className="text-[#00c864] text-[12px] mt-2">✓ Coupon applied! You saved ₹360</p>}
+              {couponApplied && <p className="text-[#00c864] text-[12px] mt-2">✓ Coupon applied! You saved 20%</p>}
             </div>
           )}
         </div>

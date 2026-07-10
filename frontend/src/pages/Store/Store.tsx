@@ -4,38 +4,15 @@ import {
   ChevronRight, MapPin, Loader2, CheckCircle2, Sparkles,
   Ticket, Gavel, Users, Gem, ShoppingBag, BookOpen, Award, Cpu,
   MessageSquare, Timer, Zap, ArrowUpRight, Flame, Tag, TrendingUp,
-  Shield, Clock, ChevronDown, Video, Mic,
+  Shield, Clock, ChevronDown, Video, Mic, Heart
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import MaskGroup from '../../components/common/MaskGroup/MaskGroup';
+import { storeService } from '@/services/store.service';
+import { formatPrice } from '@/utils/formatters';
 
-export const popularExperts = [
-  {
-    id: 1,
-    name: 'Anubhav Karmakar',
-    specialization: 'Founder, Athloft Multisport',
-    rating: 4.9,
-    reviews: 218,
-    price: '₹2,200/hr',
-    nextSlot: 'Today 5PM',
-    image: 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=120&h=120&fit=crop&auto=format',
-    badge: 'independent',
-  },
-  {
-    id: 2,
-    name: 'Vikas Srinivasan',
-    specialization: 'Founder, Runpundit',
-    rating: 4.8,
-    reviews: 342,
-    price: '₹1,800/hr',
-    nextSlot: 'Tomorrow 9AM',
-    image: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=120&h=120&fit=crop&auto=format',
-    badge: 'independent',
-  },
-];
-
-export function CoachBadge({ type }: { type: 'afi' | 'independent' }) {
-  if (type === 'afi') {
+export function SourcingModelBadge({ type }: { type: 'afi' | 'afi_affiliated' | 'independent' }) {
+  if (type === 'afi' || type === 'afi_affiliated') {
     return (
       <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded-full border border-[#c9115f] text-[#c9115f]">
         AFI-Affiliated
@@ -49,6 +26,7 @@ export function CoachBadge({ type }: { type: 'afi' | 'independent' }) {
   );
 }
 
+export const CoachBadge = SourcingModelBadge;
 
 const categories = [
   { key: 'coaches', label: 'Coaches', icon: Users, route: '/store/coaches', color: '#c9115f', bg: 'rgba(201,17,95,0.12)' },
@@ -71,25 +49,6 @@ const flashDeals = [
   { label: 'Elite ₹799/mo', color: '#ec4899', bg: 'rgba(236,72,153,0.12)', route: '/store/memberships' },
 ];
 
-const liveAuctions = [
-  { title: "Neeraj's Olympic Javelin", bid: '₹2,40,000', time: '6h 14m', img: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=200&h=160&fit=crop&auto=format', bids: 34 },
-  { title: "Avinash's Race Number", bid: '₹48,000', time: '1d 3h', img: 'https://images.unsplash.com/photo-1544899489-a083461b088c?w=200&h=160&fit=crop&auto=format', bids: 12 },
-];
-
-const topCoaches = [
-  { name: 'Anubhav Karmakar', role: 'Distance Running', price: '₹2,200/hr', rating: 4.9, reviews: 218, img: 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=100&h=100&fit=crop&auto=format', badge: 'Independent', slot: 'Today 5PM' },
-  { name: 'Vikas Srinivasan', role: 'Marathon & 5K', price: '₹1,800/hr', rating: 4.8, reviews: 342, img: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=100&h=100&fit=crop&auto=format', badge: 'Independent', slot: 'Tomorrow 9AM' },
-  { name: 'Kiran Badiger', role: 'Sprint & Speed', price: '₹2,500/hr', rating: 4.7, reviews: 164, img: 'https://images.unsplash.com/photo-1548690312-e3b507d8c110?w=100&h=100&fit=crop&auto=format', badge: 'Independent', slot: 'Tomorrow 3PM' },
-  { name: 'Pramod Deshpande', role: 'Field Events', price: '₹1,600/hr', rating: 4.6, reviews: 98, img: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=100&h=100&fit=crop&auto=format', badge: 'Independent', slot: 'Sat 11AM' },
-];
-
-const trendingItems = [
-  { title: 'Sprint Masterclass', type: 'Digital', price: '₹1,299', img: 'https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=160&h=140&fit=crop&auto=format', badge: '⚡ Hot', route: '/store/digital' },
-  { title: "Neeraj's Jersey", type: 'Merch', price: '₹4,500', img: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=160&h=140&fit=crop&auto=format', badge: '🔥 Trending', route: '/store/memorabilia' },
-  { title: 'Breakfast with Neeraj', type: 'Experience', price: '₹12,500', img: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=160&h=140&fit=crop&auto=format', badge: '✦ Exclusive', route: '/store/experiences' },
-  { title: 'High Jump Blueprint', type: 'Digital', price: '₹2,999', img: 'https://images.unsplash.com/photo-1566241440091-ec10de8db2e1?w=160&h=140&fit=crop&auto=format', badge: '🆕 New', route: '/store/athletes' },
-];
-
 export const asianGamesEvents = [
   {
     id: 'virtual-breakfast',
@@ -102,59 +61,17 @@ export const asianGamesEvents = [
     seatsLeft: 28,
     badge: 'SELLING FAST',
     badgeColor: '#ff4444',
-    description: 'Well-produced online video session. Athlete cooks actual morning meal on camera + runs 30–40 min + answers 20 fan questions.',
-    perks: ['Digital badge after event', '₹499 credit OR 3 months subscription'],
-    memento: { label: 'Autographed training bib or jersey', price: 1999 },
+    description: 'Well-produced online video session.',
     icon: Video,
     color: '#0ea5e9',
     bg: 'rgba(14,165,233,0.1)',
     img: 'https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=400&h=240&fit=crop&auto=format',
-  },
-  {
-    id: 'breakfast-neeraj',
-    title: "Breakfast with Neeraj",
-    subtitle: 'Neeraj Chopra · Intimate 10-seat table',
-    type: 'in-person',
-    dates: 'Oct 15–20, 2025',
-    price: 50000,
-    seats: 10,
-    seatsLeft: 4,
-    badge: 'EXCLUSIVE',
-    badgeColor: '#c9115f',
-    description: "75-min intimate breakfast at a non-5-star venue, menu of Neeraj's choice. The intimacy no stadium seat can replicate.",
-    perks: ['₹499 credit OR 3 months subscription'],
-    memento: { label: 'Autographed training bib or jersey', price: 0 },
-    icon: Users,
-    color: '#c9115f',
-    bg: 'rgba(201,17,95,0.1)',
-    img: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&h=240&fit=crop&auto=format',
-  },
-  {
-    id: 'virtual-ama',
-    title: 'Virtual AMA — Medal Winners',
-    subtitle: '3–4 athletes + coach per session',
-    type: 'virtual',
-    dates: 'Oct 1–15, 2025',
-    price: 999,
-    seats: 30,
-    seatsLeft: 17,
-    badge: '4 SESSIONS',
-    badgeColor: '#00c864',
-    description: '3–4 sessions, each with 3–4 medal-winning athletes and a coach. Direct Q&A with champions fresh from Nagoya.',
-    perks: ['Digital badge after event', '₹199 credit OR 1 month subscription'],
-    memento: null,
-    icon: Mic,
-    color: '#00c864',
-    bg: 'rgba(0,200,100,0.1)',
-    img: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=400&h=240&fit=crop&auto=format',
   },
 ];
 
 const brands = [
   { name: 'Nike', discount: '40% off', color: '#ff6b35', img: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=80&h=60&fit=crop&auto=format' },
   { name: 'Puma', discount: '30% off', color: '#00c864', img: 'https://images.unsplash.com/photo-1600185365926-3a2ce3cdb9eb?w=80&h=60&fit=crop&auto=format' },
-  { name: 'Adidas', discount: '25% off', color: '#0ea5e9', img: 'https://images.unsplash.com/photo-1518002171953-a080ee817e1f?w=80&h=60&fit=crop&auto=format' },
-  { name: 'ASICS', discount: '20% off', color: '#8b5cf6', img: 'https://images.unsplash.com/photo-1539185441755-769473a23570?w=80&h=60&fit=crop&auto=format' },
 ];
 
 function SectionHeader({ title, icon: Icon, color, onSeeAll }: { title: string; icon: React.ElementType; color: string; onSeeAll?: () => void }) {
@@ -176,12 +93,77 @@ function SectionHeader({ title, icon: Icon, color, onSeeAll }: { title: string; 
 export default function StoreScreen() {
   const navigate = useNavigate();
   const [locationState, setLocationState] = useState<'fetching' | 'saved'>('fetching');
-  const [activeOffer, setActiveOffer] = useState(0);
+  const [coins, setCoins] = useState<number>(250);
+
+  // Live collections
+  const [coaches, setCoaches] = useState<any[]>([]);
+  const [auctions, setAuctions] = useState<any[]>([]);
+  const [trending, setTrending] = useState<any[]>([]);
+  const [recentlyViewed, setRecentlyViewed] = useState<any[]>([]);
+  const [wishlist, setWishlist] = useState<any[]>([]);
+
+  const loadData = async () => {
+    try {
+      const allProducts = await storeService.getProducts();
+      
+      // Filter coaches
+      const coachList = allProducts.filter(p => p.category === 'coaches');
+      setCoaches(coachList);
+
+      // Filter memorabilia
+      const memorabiliaList = allProducts.filter(p => p.category === 'memorabilia');
+      setAuctions(memorabiliaList);
+
+      // Filter other trending items
+      const trendingList = allProducts.filter(p => p.category !== 'coaches');
+      setTrending(trendingList);
+
+      // Fetch user coins, wishlist, recently viewed
+      const [coinsRes, wishlistRes, recentRes] = await Promise.all([
+        storeService.getCoinsBalance('mock-user-123'),
+        storeService.getWishlist('mock-user-123'),
+        storeService.getRecentlyViewed('mock-user-123'),
+      ]);
+
+      setCoins(coinsRes.balance);
+      setWishlist(wishlistRes);
+      setRecentlyViewed(recentRes);
+    } catch (err) {
+      console.error('Error loading store data:', err);
+    }
+  };
 
   useEffect(() => {
     const t = setTimeout(() => setLocationState('saved'), 1600);
+    loadData();
     return () => clearTimeout(t);
   }, []);
+
+  const handleProductClick = async (productId: string, route: string) => {
+    try {
+      await storeService.addRecentlyViewed('mock-user-123', productId);
+    } catch (e) {
+      console.error(e);
+    }
+    navigate(route);
+  };
+
+  const handleWishlistToggle = async (productId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const isWishlisted = wishlist.some(item => item.productId === productId || item.id === productId);
+    const action = isWishlisted ? 'remove' : 'add';
+    try {
+      await storeService.toggleWishlist('mock-user-123', productId, action);
+      const updated = await storeService.getWishlist('mock-user-123');
+      setWishlist(updated);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const isProductWishlisted = (productId: string) => {
+    return wishlist.some(item => item.productId === productId || item.id === productId);
+  };
 
   return (
     <div className="bg-black w-full flex justify-center min-h-screen">
@@ -211,10 +193,13 @@ export default function StoreScreen() {
             </div>
           </div>
           <div className="flex items-center gap-[6px]">
-            <div className="flex items-center gap-[4px] bg-[rgba(0,0,0,0.4)] border border-[rgba(255,255,255,0.1)] rounded-full px-[8px] py-[4px]">
+            <button
+              onClick={() => navigate('/store/wallet')}
+              className="flex items-center gap-[4px] bg-[rgba(0,0,0,0.4)] border border-[rgba(255,255,255,0.1)] rounded-full px-[8px] py-[4px]"
+            >
               <Star className="w-[12px] h-[12px] text-[#FFD700] fill-[#FFD700]" />
-              <span className="text-white font-semibold text-[11px] leading-none">250</span>
-            </div>
+              <span className="text-white font-semibold text-[11px] leading-none">{coins}</span>
+            </button>
             <button className="relative bg-[rgba(0,0,0,0.4)] border border-[rgba(255,255,255,0.1)] rounded-full p-[6px]">
               <Bell className="w-[14px] h-[14px] text-white" />
               <div className="absolute -top-[2px] -right-[2px] bg-[#ff0055] rounded-full w-[14px] h-[14px] flex items-center justify-center">
@@ -245,7 +230,7 @@ export default function StoreScreen() {
                   <Loader2 className="w-[10px] h-[10px] text-[#4a4a5a] animate-spin" />
                 )}
               </div>
-              <p className="text-[#4a4a5a] text-[11px]">Marketplace · 1,200+ items</p>
+              <p className="text-[#4a4a5a] text-[11px]">Marketplace · Firestore Active</p>
             </div>
             <button
               onClick={() => navigate('/store/my-bookings')}
@@ -276,7 +261,7 @@ export default function StoreScreen() {
           {/* Hero Banner — Featured Experience */}
           <div className="px-4 mb-4">
             <button
-              onClick={() => navigate('/store/experiences')}
+              onClick={() => handleProductClick('experience-1', '/store/experiences')}
               className="w-full rounded-[20px] overflow-hidden relative text-left active:scale-[0.98] transition-transform"
               style={{ height: 200 }}
             >
@@ -299,8 +284,8 @@ export default function StoreScreen() {
                 <p className="text-[#cd620e] text-[10px] font-black uppercase tracking-widest mb-1">✦ Exclusive Experience</p>
                 <p className="text-white text-[20px] font-black leading-tight">Breakfast with<br />Neeraj Chopra</p>
                 <div className="flex items-center gap-3 mt-2">
-                  <span className="text-white text-[14px] font-black" style={{ textShadow: '0 0 12px rgba(201,17,95,0.8)' }}>₹12,500</span>
-                  <span className="text-[#8a8a9a] text-[10px]">3 seats · Bengaluru</span>
+                  <span className="text-white text-[14px] font-black" style={{ textShadow: '0 0 12px rgba(201,17,95,0.8)' }}>₹50,000</span>
+                  <span className="text-[#8a8a9a] text-[10px]">4 seats · Bengaluru</span>
                   <div className="ml-auto flex items-center gap-1 px-3 py-1.5 rounded-full" style={{ background: 'linear-gradient(90deg,#c9115f,#cd620e)' }}>
                     <span className="text-white text-[11px] font-black">Book Now</span>
                     <ArrowUpRight className="w-[10px] h-[10px] text-white" />
@@ -338,6 +323,28 @@ export default function StoreScreen() {
           {/* Divider */}
           <div className="mx-4 mb-4 h-px bg-[rgba(255,255,255,0.05)]" />
 
+          {/* Recently Viewed (Phase 10) */}
+          {recentlyViewed.length > 0 && (
+            <div className="mb-4">
+              <SectionHeader title="Recently Viewed" icon={Clock} color="#00c864" />
+              <div className="flex gap-2.5 overflow-x-auto no-scrollbar px-4 pb-1">
+                {recentlyViewed.map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => handleProductClick(item.productId, item.category === 'coaches' ? `/store/coach/${item.productId.replace('coach-', '')}` : `/store/${item.category}`)}
+                    className="flex-shrink-0 w-[120px] rounded-[16px] p-2 text-left bg-[#111116] border border-[rgba(255,255,255,0.06)]"
+                  >
+                    <div className="h-[70px] rounded-[10px] overflow-hidden mb-2 relative">
+                      <img src={item.image || 'https://images.unsplash.com/photo-1517649763962-0c623066013b?w=200&h=150&fit=crop'} alt={item.title} className="w-full h-full object-cover" />
+                    </div>
+                    <p className="text-white text-[10px] font-bold truncate">{item.title}</p>
+                    <p className="text-[#c9115f] text-[10px] font-black mt-0.5">{formatPrice(item.pricePaise)}</p>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Asian Games — Ticketed Events */}
           <div className="mb-4">
             <div className="flex items-center justify-between px-4 mb-3">
@@ -361,7 +368,7 @@ export default function StoreScreen() {
                 return (
                   <button
                     key={ev.id}
-                    onClick={() => navigate('/store/ticketed-events')}
+                    onClick={() => handleProductClick('experience-2', '/store/ticketed-events')}
                     className="flex-shrink-0 w-[220px] rounded-[18px] overflow-hidden text-left active:scale-[0.97] transition-transform"
                     style={{ background: '#0f0f17', border: `1px solid ${ev.color}30` }}
                   >
@@ -406,111 +413,124 @@ export default function StoreScreen() {
           <div className="mx-4 mb-4 h-px bg-[rgba(255,255,255,0.05)]" />
 
           {/* Live Auctions */}
-          <div className="mb-4">
-            <SectionHeader title="Live Auctions" icon={Gavel} color="#ff4444" onSeeAll={() => navigate('/store/auctions')} />
-            <div className="px-4 grid grid-cols-2 gap-2.5">
-              {liveAuctions.map((a) => (
-                <button
-                  key={a.title}
-                  onClick={() => navigate('/store/auctions')}
-                  className="rounded-[16px] overflow-hidden text-left active:scale-[0.97] transition-transform"
-                  style={{ background: '#0f0f14', border: '1px solid rgba(255,68,68,0.2)' }}
-                >
-                  <div className="relative h-[110px]">
-                    <img src={a.img} alt={a.title} className="w-full h-full object-cover" />
-                    <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.85), transparent 60%)' }} />
-                    <div className="absolute top-2 left-2 flex items-center gap-1 rounded-full px-1.5 py-0.5" style={{ background: 'rgba(255,68,68,0.9)' }}>
-                      <div className="w-[4px] h-[4px] rounded-full bg-white animate-pulse" />
-                      <span className="text-white text-[7px] font-black">LIVE</span>
-                    </div>
-                    <div className="absolute bottom-1.5 left-2 right-2 flex items-center justify-between">
-                      <span className="text-white text-[9px] font-black">{a.bid}</span>
-                      <div className="flex items-center gap-0.5">
-                        <Timer className="w-[7px] h-[7px] text-[#FFD700]" />
-                        <span className="text-[#FFD700] text-[7px] font-bold">{a.time}</span>
+          {auctions.length > 0 && (
+            <div className="mb-4">
+              <SectionHeader title="Live Auctions" icon={Gavel} color="#ff4444" onSeeAll={() => navigate('/store/auctions')} />
+              <div className="px-4 grid grid-cols-2 gap-2.5">
+                {auctions.map((a) => (
+                  <button
+                    key={a.id}
+                    onClick={() => handleProductClick(a.id, '/store/auctions')}
+                    className="rounded-[16px] overflow-hidden text-left active:scale-[0.97] transition-transform relative"
+                    style={{ background: '#0f0f14', border: '1px solid rgba(255,68,68,0.2)' }}
+                  >
+                    <button
+                      onClick={(e) => handleWishlistToggle(a.id, e)}
+                      className="absolute top-2 right-2 z-10 w-[24px] h-[24px] rounded-full bg-black/60 flex items-center justify-center"
+                    >
+                      <Heart className="w-[11px] h-[11px]" style={{ color: isProductWishlisted(a.id) ? '#c9115f' : 'white', fill: isProductWishlisted(a.id) ? '#c9115f' : 'none' }} />
+                    </button>
+                    <div className="relative h-[110px]">
+                      <img src={a.image || 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=200&h=160&fit=crop'} alt={a.title} className="w-full h-full object-cover" />
+                      <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.85), transparent 60%)' }} />
+                      <div className="absolute top-2 left-2 flex items-center gap-1 rounded-full px-1.5 py-0.5" style={{ background: 'rgba(255,68,68,0.9)' }}>
+                        <div className="w-[4px] h-[4px] rounded-full bg-white animate-pulse" />
+                        <span className="text-white text-[7px] font-black">LIVE</span>
                       </div>
                     </div>
-                  </div>
-                  <div className="p-2.5">
-                    <p className="text-white text-[11px] font-bold leading-tight">{a.title}</p>
-                    <div className="flex items-center justify-between mt-1">
-                      <span className="text-[#5a5a6a] text-[9px]">{a.bids} bids</span>
-                      <span className="text-[#ff6b6b] text-[9px] font-bold">Bid →</span>
+                    <div className="p-2.5">
+                      <p className="text-white text-[11px] font-bold leading-tight truncate">{a.title}</p>
+                      <div className="flex items-center justify-between mt-1">
+                        <span className="text-[#99A1AF] text-[10px] font-semibold">{formatPrice(a.pricePaise)}</span>
+                        <span className="text-[#ff6b6b] text-[9px] font-bold">Bid →</span>
+                      </div>
                     </div>
-                  </div>
-                </button>
-              ))}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Divider */}
           <div className="mx-4 mb-4 h-px bg-[rgba(255,255,255,0.05)]" />
 
           {/* Top Coaches */}
-          <div className="mb-4">
-            <SectionHeader title="Top Coaches" icon={Users} color="#c9115f" onSeeAll={() => navigate('/store/coaches')} />
-            <div className="flex gap-2.5 overflow-x-auto no-scrollbar px-4 pb-1">
-              {topCoaches.map((c) => (
-                <button
-                  key={c.name}
-                  onClick={() => navigate('/store/coaches')}
-                  className="flex-shrink-0 w-[140px] rounded-[16px] p-3 text-left active:scale-[0.97] transition-transform"
-                  style={{ background: '#0f0f14', border: '1px solid rgba(255,255,255,0.06)' }}
-                >
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="w-[40px] h-[40px] rounded-full overflow-hidden flex-shrink-0" style={{ border: '1.5px solid rgba(201,17,95,0.4)' }}>
-                      <img src={c.img} alt={c.name} className="w-full h-full object-cover" />
+          {coaches.length > 0 && (
+            <div className="mb-4">
+              <SectionHeader title="Top Coaches" icon={Users} color="#c9115f" onSeeAll={() => navigate('/store/coaches')} />
+              <div className="flex gap-2.5 overflow-x-auto no-scrollbar px-4 pb-1">
+                {coaches.map((c) => (
+                  <button
+                    key={c.id}
+                    onClick={() => handleProductClick(c.id, `/store/coach/${c.coachId || '1'}`)}
+                    className="flex-shrink-0 w-[140px] rounded-[16px] p-3 text-left active:scale-[0.97] transition-transform relative"
+                    style={{ background: '#0f0f14', border: '1px solid rgba(255,255,255,0.06)' }}
+                  >
+                    <button
+                      onClick={(e) => handleWishlistToggle(c.id, e)}
+                      className="absolute top-2 right-2 z-10 w-[24px] h-[24px] rounded-full bg-black/60 flex items-center justify-center"
+                    >
+                      <Heart className="w-[11px] h-[11px]" style={{ color: isProductWishlisted(c.id) ? '#c9115f' : 'white', fill: isProductWishlisted(c.id) ? '#c9115f' : 'none' }} />
+                    </button>
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-[40px] h-[40px] rounded-full overflow-hidden flex-shrink-0" style={{ border: '1.5px solid rgba(201,17,95,0.4)' }}>
+                        <img src={c.image} alt={c.name} className="w-full h-full object-cover" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-white text-[11px] font-bold leading-tight truncate">{c.name}</p>
+                        <p className="text-[#5a5a6a] text-[9px] truncate">{c.role || 'Distance Running'}</p>
+                      </div>
                     </div>
-                    <div className="min-w-0">
-                      <p className="text-white text-[11px] font-bold leading-tight truncate">{c.name}</p>
-                      <p className="text-[#5a5a6a] text-[9px] truncate">{c.role}</p>
+                    <div className="flex items-center gap-1 mb-1.5">
+                      <Star className="w-[9px] h-[9px] text-[#FFD700] fill-[#FFD700]" />
+                      <span className="text-[#FFD700] text-[9px] font-bold">{c.rating || 4.8}</span>
+                      <span className="text-[#4a4a5a] text-[9px]">({c.reviews || 100})</span>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-1 mb-1.5">
-                    <Star className="w-[9px] h-[9px] text-[#FFD700] fill-[#FFD700]" />
-                    <span className="text-[#FFD700] text-[9px] font-bold">{c.rating}</span>
-                    <span className="text-[#4a4a5a] text-[9px]">({c.reviews})</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-[#c9115f] text-[11px] font-black">{c.price}</span>
-                  </div>
-                  <div className="mt-1.5 flex items-center gap-1">
-                    <div className="w-[5px] h-[5px] rounded-full bg-[#00c864]" />
-                    <span className="text-[#00c864] text-[8px] font-semibold">{c.slot}</span>
-                  </div>
-                </button>
-              ))}
+                    <div className="flex items-center justify-between">
+                      <span className="text-[#c9115f] text-[11px] font-black">{formatPrice(c.pricePaise)}</span>
+                    </div>
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Divider */}
           <div className="mx-4 mb-4 h-px bg-[rgba(255,255,255,0.05)]" />
 
           {/* Trending Now */}
-          <div className="mb-4">
-            <SectionHeader title="Trending Now" icon={TrendingUp} color="#cd620e" onSeeAll={() => navigate('/store/athletes')} />
-            <div className="flex gap-2.5 overflow-x-auto no-scrollbar px-4 pb-1">
-              {trendingItems.map((item) => (
-                <button
-                  key={item.title}
-                  onClick={() => navigate(item.route)}
-                  className="flex-shrink-0 w-[130px] rounded-[16px] overflow-hidden text-left active:scale-[0.97] transition-transform"
-                  style={{ background: '#0f0f14', border: '1px solid rgba(255,255,255,0.06)' }}
-                >
-                  <div className="relative h-[100px]">
-                    <img src={item.img} alt={item.title} className="w-full h-full object-cover" />
-                    <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, #0f0f14, transparent 60%)' }} />
-                    <span className="absolute top-2 left-2 text-[8px] font-black px-1.5 py-0.5 rounded-full text-white" style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)' }}>{item.badge}</span>
-                  </div>
-                  <div className="p-2.5">
-                    <p className="text-[#5a5a6a] text-[8px] font-bold uppercase tracking-wider">{item.type}</p>
-                    <p className="text-white text-[11px] font-bold leading-snug mt-0.5">{item.title}</p>
-                    <p className="text-transparent bg-clip-text bg-gradient-to-r from-[#c9115f] to-[#cd620e] text-[12px] font-black mt-1">{item.price}</p>
-                  </div>
-                </button>
-              ))}
+          {trending.length > 0 && (
+            <div className="mb-4">
+              <SectionHeader title="Trending Now" icon={TrendingUp} color="#cd620e" onSeeAll={() => navigate('/store/athletes')} />
+              <div className="flex gap-2.5 overflow-x-auto no-scrollbar px-4 pb-1">
+                {trending.map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => handleProductClick(item.id, item.category === 'memorabilia' ? '/store/memorabilia' : `/store/${item.category}`)}
+                    className="flex-shrink-0 w-[130px] rounded-[16px] overflow-hidden text-left active:scale-[0.97] transition-transform relative"
+                    style={{ background: '#0f0f14', border: '1px solid rgba(255,255,255,0.06)' }}
+                  >
+                    <button
+                      onClick={(e) => handleWishlistToggle(item.id, e)}
+                      className="absolute top-2 right-2 z-10 w-[24px] h-[24px] rounded-full bg-black/60 flex items-center justify-center"
+                    >
+                      <Heart className="w-[11px] h-[11px]" style={{ color: isProductWishlisted(item.id) ? '#c9115f' : 'white', fill: isProductWishlisted(item.id) ? '#c9115f' : 'none' }} />
+                    </button>
+                    <div className="relative h-[100px]">
+                      <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
+                      <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, #0f0f14, transparent 60%)' }} />
+                      <span className="absolute top-2 left-2 text-[8px] font-black px-1.5 py-0.5 rounded-full text-white" style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)' }}>⚡ Hot</span>
+                    </div>
+                    <div className="p-2.5">
+                      <p className="text-[#5a5a6a] text-[8px] font-bold uppercase tracking-wider">{item.category}</p>
+                      <p className="text-white text-[11px] font-bold leading-snug mt-0.5 truncate">{item.title}</p>
+                      <p className="text-transparent bg-clip-text bg-gradient-to-r from-[#c9115f] to-[#cd620e] text-[12px] font-black mt-1">{formatPrice(item.pricePaise)}</p>
+                    </div>
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Divider */}
           <div className="mx-4 mb-4 h-px bg-[rgba(255,255,255,0.05)]" />
@@ -518,7 +538,7 @@ export default function StoreScreen() {
           {/* Brand Deals */}
           <div className="mb-4">
             <SectionHeader title="Brand Deals" icon={Tag} color="#8b5cf6" onSeeAll={() => navigate('/store/brands')} />
-            <div className="px-4 grid grid-cols-4 gap-2">
+            <div className="px-4 grid grid-cols-2 gap-2">
               {brands.map((b) => (
                 <button
                   key={b.name}
@@ -526,7 +546,7 @@ export default function StoreScreen() {
                   className="rounded-[14px] overflow-hidden text-left active:scale-[0.97] transition-transform"
                   style={{ background: '#0f0f14', border: '1px solid rgba(255,255,255,0.06)' }}
                 >
-                  <div className="h-[50px] overflow-hidden">
+                  <div className="h-[60px] overflow-hidden">
                     <img src={b.img} alt={b.name} className="w-full h-full object-cover" />
                   </div>
                   <div className="p-1.5">

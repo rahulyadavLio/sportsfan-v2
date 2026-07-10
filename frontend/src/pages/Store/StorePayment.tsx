@@ -1,27 +1,68 @@
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams, useSearchParams } from 'react-router';
 import { ArrowLeft, Shield, ChevronRight, Check } from 'lucide-react';
-import { useState } from 'react';
-
-const paymentMethods = [
-  { id: 'upi', label: 'UPI', subtitle: 'Pay via any UPI app', icon: '⚡' },
-  { id: 'gpay', label: 'Google Pay', subtitle: 'Fast & secure', icon: '🟢' },
-  { id: 'phonepe', label: 'PhonePe', subtitle: 'Instant transfer', icon: '💜' },
-  { id: 'paytm', label: 'Paytm', subtitle: 'Paytm wallet / UPI', icon: '🔵' },
-  { id: 'card', label: 'Credit / Debit Card', subtitle: 'Visa, Mastercard, RuPay', icon: '💳' },
-];
+import { useState, useEffect } from 'react';
+import { storeService } from '@/services/store.service';
+import { useIdempotencyKey } from '@/hooks/useIdempotencyKey';
+import { formatPrice } from '@/utils/formatters';
 
 export default function StorePayment() {
   const navigate = useNavigate();
   const { id } = useParams();
+  const [searchParams] = useSearchParams();
+  const slotId = searchParams.get('slotId') || undefined;
+  const priceParam = searchParams.get('price');
+  const pricePaise = priceParam ? parseInt(priceParam, 10) : 189900; // fallback to ₹1,899
+
+  const { key: idempotencyKey } = useIdempotencyKey();
   const [selected, setSelected] = useState('gpay');
   const [processing, setProcessing] = useState(false);
+  const [walletBalance, setWalletBalance] = useState<number>(0);
 
-  const handlePay = () => {
+  // Fetch wallet balance
+  useEffect(() => {
+    storeService.getWalletBalance('mock-user-123')
+      .then((res) => setWalletBalance(res.balancePaise))
+      .catch((err) => console.error('Error fetching wallet balance:', err));
+  }, []);
+
+  const handlePay = async () => {
     setProcessing(true);
-    setTimeout(() => {
-      navigate(`/store/booking-success/${id || '1'}`);
-    }, 1800);
+    try {
+      const res = await storeService.checkout({
+        productId: id || 'coach-1',
+        slotId: slotId,
+        userId: 'mock-user-123',
+        paymentMethod: selected as any,
+        pricePaise,
+        idempotencyKey,
+      });
+
+      if (res.success) {
+        navigate(`/store/booking-success/${res.orderId}`);
+      } else {
+        alert('Payment failed');
+        setProcessing(false);
+      }
+    } catch (err: any) {
+      alert(err.message || 'Payment execution failed');
+      setProcessing(false);
+    }
   };
+
+  const paymentMethods = [
+    { id: 'upi', label: 'UPI', subtitle: 'Pay via any UPI app', icon: '⚡' },
+    { id: 'gpay', label: 'Google Pay', subtitle: 'Fast & secure', icon: '🟢' },
+    { id: 'phonepe', label: 'PhonePe', subtitle: 'Instant transfer', icon: '💜' },
+    { id: 'paytm', label: 'Paytm', subtitle: 'Paytm wallet / UPI', icon: '🔵' },
+    { id: 'card', label: 'Credit / Debit Card', subtitle: 'Visa, Mastercard, RuPay', icon: '💳' },
+    { 
+      id: 'wallet', 
+      label: 'SportsFan Wallet', 
+      subtitle: `Balance: ${formatPrice(walletBalance)}`, 
+      icon: '👛',
+      disabled: walletBalance < pricePaise
+    },
+  ];
 
   return (
     <div className="bg-black w-full flex justify-center min-h-screen">
@@ -48,10 +89,12 @@ export default function StorePayment() {
           {/* Order summary pill */}
           <div className="bg-[rgba(201,17,95,0.08)] border border-[rgba(201,17,95,0.2)] rounded-[16px] p-4 mb-5 flex items-center justify-between">
             <div>
-              <p className="text-white text-[13px] font-semibold">Technique Analysis · 60 min</p>
-              <p className="text-[#99A1AF] text-[12px]">June 17, 2026 · 4:00 PM</p>
+              <p className="text-white text-[13px] font-semibold">Coaching Session Booking</p>
+              <p className="text-[#99A1AF] text-[12px]">Complete secure payment</p>
             </div>
-            <p className="text-transparent bg-clip-text bg-gradient-to-r from-[#c9115f] to-[#cd620e] text-[18px] font-bold">₹1,899</p>
+            <p className="text-transparent bg-clip-text bg-gradient-to-r from-[#c9115f] to-[#cd620e] text-[18px] font-bold">
+              {formatPrice(pricePaise)}
+            </p>
           </div>
 
           {/* Payment methods */}
@@ -60,12 +103,15 @@ export default function StorePayment() {
             {paymentMethods.map((method) => (
               <button
                 key={method.id}
-                onClick={() => setSelected(method.id)}
+                onClick={() => !method.disabled && setSelected(method.id)}
                 className={`w-full rounded-[14px] border p-3.5 flex items-center gap-3 text-left transition-all ${
-                  selected === method.id
+                  method.disabled
+                    ? 'opacity-40 cursor-not-allowed bg-[#0d0d11] border-[rgba(255,255,255,0.02)]'
+                    : selected === method.id
                     ? 'bg-[rgba(201,17,95,0.08)] border-[rgba(201,17,95,0.4)]'
                     : 'bg-[#111116] border-[rgba(255,255,255,0.07)]'
                 }`}
+                disabled={method.disabled}
               >
                 <span className="text-[22px]">{method.icon}</span>
                 <div className="flex-1">
@@ -107,7 +153,7 @@ export default function StorePayment() {
                 Processing...
               </>
             ) : (
-              <>Pay ₹1,899 <ChevronRight className="w-[16px] h-[16px]" /></>
+              <>Pay {formatPrice(pricePaise)} <ChevronRight className="w-[16px] h-[16px]" /></>
             )}
           </button>
         </div>

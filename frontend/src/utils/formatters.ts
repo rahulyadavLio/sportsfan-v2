@@ -44,6 +44,11 @@ export function formatCurrency(amount: number, currency = "INR", locale = "en-IN
   }).format(amount);
 }
 
+/** Format a price from paise/cents to standard display format */
+export function formatPrice(paise: number, currency = "INR", locale = "en-IN"): string {
+  return formatCurrency(paise / 100, currency, locale);
+}
+
 /** Format a large number with abbreviation (e.g. 1.2M, 45K) */
 export function formatCount(num: number): string {
   if (num >= 1_000_000) return `${(num / 1_000_000).toFixed(1)}M`;

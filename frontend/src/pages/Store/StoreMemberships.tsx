@@ -1,81 +1,63 @@
 import { useNavigate } from 'react-router';
- 
 import { ArrowLeft, CheckCircle, Star, Zap, Crown, ChevronRight, PauseCircle, TrendingUp } from 'lucide-react';
-import { useState } from 'react';
-
-const tiers = [
-  {
-    id: 'monthly',
-    name: 'Monthly',
-    price: '₹499',
-    period: '/month',
-    popular: false,
-    color: '#6b7280',
-    gradientFrom: 'rgba(107,114,128,0.15)',
-    gradientTo: 'rgba(107,114,128,0.05)',
-    benefits: [
-      'Access to Dolly AI (5 analyses/month)',
-      'Fantasy & Fan Battle participation',
-      'Match Centre live stats',
-      'Basic Records Explorer',
-      'Fan Zone community access',
-    ],
-  },
-  {
-    id: 'quarterly',
-    name: 'Quarterly',
-    price: '₹1,199',
-    period: '/3 months',
-    popular: true,
-    color: '#c9115f',
-    gradientFrom: 'rgba(201,17,95,0.2)',
-    gradientTo: 'rgba(205,98,14,0.1)',
-    benefits: [
-      'Everything in Monthly',
-      'Dolly AI (25 analyses/month)',
-      'Priority coach booking',
-      'Exclusive experience early access',
-      'Store discounts (10% off)',
-      'Advanced Records Explorer',
-      'Watch Along interactive features',
-    ],
-  },
-  {
-    id: 'elite',
-    name: 'Elite',
-    price: '₹3,999',
-    period: '/year',
-    popular: false,
-    color: '#FFD700',
-    gradientFrom: 'rgba(255,215,0,0.12)',
-    gradientTo: 'rgba(205,98,14,0.08)',
-    benefits: [
-      'Everything in Quarterly',
-      'Unlimited Dolly AI analyses',
-      'AFI athlete meet & greet eligibility',
-      'Signed memorabilia drops (2/year)',
-      'Free experience bookings (1/quarter)',
-      'Store discounts (20% off)',
-      'Personal coach matching service',
-      'Elite badge on profile',
-    ],
-  },
-];
-
-const currentMembership = {
-  tier: 'quarterly',
-  renewalDate: 'Oct 3, 2026',
-  price: '₹1,199',
-  daysLeft: 92,
-};
+import { useState, useEffect } from 'react';
+import { storeService } from '@/services/store.service';
+import { formatPrice } from '@/utils/formatters';
 
 export default function StoreMemberships() {
   const navigate = useNavigate();
   const [view, setView] = useState<'plans' | 'active'>('active');
   const [selectedTier, setSelectedTier] = useState<string | null>(null);
   const [upgraded, setUpgraded] = useState(false);
+  const [tiers, setTiers] = useState<any[]>([]);
+  const [currentMembership, setCurrentMembership] = useState<any>({
+    tier: 'quarterly',
+    renewalDate: 'Oct 3, 2026',
+    pricePaise: 119900,
+    daysLeft: 92,
+  });
+  const [loading, setLoading] = useState(true);
 
-  const activeTier = tiers.find(t => t.id === currentMembership.tier)!;
+  const loadMembership = async () => {
+    setLoading(true);
+    try {
+      const [plans, activeMember] = await Promise.all([
+        storeService.getMembershipPlans(),
+        storeService.getUserMembership('mock-user-123'),
+      ]);
+      setTiers(plans);
+      setCurrentMembership(activeMember);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadMembership();
+  }, []);
+
+  const handleUpgrade = async (tierId: string) => {
+    try {
+      const updated = await storeService.updateUserMembership('mock-user-123', tierId);
+      setCurrentMembership(updated);
+      setUpgraded(true);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const activeTier = tiers.find(t => t.id === currentMembership.tier) || tiers[1] || {
+    name: 'Quarterly',
+    pricePaise: 119900,
+    gradientFrom: 'rgba(201,17,95,0.2)',
+    gradientTo: 'rgba(205,98,14,0.1)',
+    color: '#c9115f',
+    benefits: [],
+    price: '₹1,199',
+    period: '/3 months'
+  };
 
   if (upgraded) {
     return (
@@ -138,7 +120,9 @@ export default function StoreMemberships() {
         </div>
 
         <div className="flex-1 overflow-y-auto pb-[70px] no-scrollbar px-4 pt-4">
-          {view === 'active' ? (
+          {loading ? (
+            <p className="text-center text-[#99A1AF] text-[12px] py-10">Loading memberships...</p>
+          ) : view === 'active' ? (
             <>
               {/* Active membership card */}
               <div
@@ -149,7 +133,7 @@ export default function StoreMemberships() {
                   <div>
                     <p className="text-[#99A1AF] text-[11px] mb-1">Current Plan</p>
                     <p className="text-white text-[24px] font-bold">{activeTier.name}</p>
-                    <p className="text-[13px] font-semibold" style={{ color: activeTier.color }}>{activeTier.price}{activeTier.period}</p>
+                    <p className="text-[13px] font-semibold" style={{ color: activeTier.color }}>{formatPrice(currentMembership.pricePaise || activeTier.pricePaise)}{activeTier.period}</p>
                   </div>
                   <div className="w-[56px] h-[56px] rounded-[16px] flex items-center justify-center" style={{ background: activeTier.color }}>
                     <Star className="w-[24px] h-[24px] text-white fill-white" />
@@ -219,7 +203,7 @@ export default function StoreMemberships() {
                     <div className="flex items-start justify-between mb-4">
                       <div>
                         <p className="text-white text-[20px] font-bold">{tier.name}</p>
-                        <p className="text-[22px] font-bold" style={{ color: tier.color }}>{tier.price}<span className="text-[13px] font-normal text-[#99A1AF]">{tier.period}</span></p>
+                        <p className="text-[22px] font-bold" style={{ color: tier.color }}>{formatPrice(tier.pricePaise)}<span className="text-[13px] font-normal text-[#99A1AF]">{tier.period}</span></p>
                       </div>
                       <div className="w-[44px] h-[44px] rounded-[12px] flex items-center justify-center" style={{ background: tier.color }}>
                         {tier.id === 'elite' ? <Crown className="w-[20px] h-[20px] text-white" /> :
@@ -254,7 +238,7 @@ export default function StoreMemberships() {
                       </div>
                     ) : (
                       <button
-                        onClick={() => tier.id === 'elite' && setUpgraded(true)}
+                        onClick={() => handleUpgrade(tier.id)}
                         className="w-full rounded-full py-3 text-white text-[14px] font-bold"
                         style={{ background: `linear-gradient(135deg, ${tier.color === '#FFD700' ? '#cd620e' : tier.color}, ${tier.color})`, boxShadow: `0 0 16px ${tier.color}30` }}
                       >
@@ -268,7 +252,6 @@ export default function StoreMemberships() {
           )}
         </div>
       </div>
- 
     </div>
   );
 }

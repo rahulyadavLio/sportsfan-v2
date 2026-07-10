@@ -1,21 +1,18 @@
 import { useNavigate } from 'react-router';
- 
-import { ArrowLeft, Plus, ChevronRight, Check, X, Clock, DollarSign, MapPin, Wifi } from 'lucide-react';
-import { useState } from 'react';
+import { ArrowLeft, Plus, ChevronRight, Check, X, Clock, DollarSign, MapPin, Wifi, AlertCircle } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { storeService } from '@/services/store.service';
 
 type RequestStatus = 'open' | 'offers' | 'confirmed' | 'expired';
 
-const myRequests: {
-  id: number; sport: string; skill: string; goal: string; budget: string;
-  status: RequestStatus; postedDate: string; offersCount: number;
-}[] = [
-  { id: 1, sport: 'Distance Running', skill: 'Marathon Pacing', goal: 'Qualify for Berlin Marathon', budget: '₹1,500–2,500/hr', status: 'offers', postedDate: '2 days ago', offersCount: 3 },
-  { id: 2, sport: 'Sprinting', skill: '100m Technique', goal: 'Break 11 seconds', budget: '₹2,000–3,000/hr', status: 'open', postedDate: '5 hours ago', offersCount: 0 },
-  { id: 3, sport: 'Athletics', skill: 'Strength & Conditioning', goal: 'Reduce injury frequency', budget: '₹1,000–2,000/hr', status: 'confirmed', postedDate: '1 week ago', offersCount: 2 },
-  { id: 4, sport: 'Javelin', skill: 'Release Mechanics', goal: 'Improve to 65m+', budget: '₹2,500–4,000/hr', status: 'expired', postedDate: '2 weeks ago', offersCount: 1 },
-];
+const statusConfig: Record<RequestStatus, { label: string; color: string; bg: string }> = {
+  open: { label: 'Open', color: '#00c864', bg: 'rgba(0,200,100,0.12)' },
+  offers: { label: 'Offers Received', color: '#FFD700', bg: 'rgba(255,215,0,0.12)' },
+  confirmed: { label: 'Confirmed', color: '#c9115f', bg: 'rgba(201,17,95,0.12)' },
+  expired: { label: 'Expired', color: '#6b7280', bg: 'rgba(107,114,128,0.12)' },
+};
 
-const offerCards = [
+const mockOffers = [
   {
     id: 1,
     name: 'Anubhav Karmakar',
@@ -34,23 +31,7 @@ const offerCards = [
     note: "Specialise in international qualifier standards. Counter-offer: ₹1,600/hr with free race-day strategy call.",
     rating: 4.7,
   },
-  {
-    id: 3,
-    name: 'Vikas Srinivasan',
-    role: 'Founder, Runpundit',
-    price: '₹1,800/hr',
-    image: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=80&h=80&fit=crop&auto=format',
-    note: "Berlin specialist. My online coaching model fits your schedule well. Video check-in every 2 weeks.",
-    rating: 4.8,
-  },
 ];
-
-const statusConfig: Record<RequestStatus, { label: string; color: string; bg: string }> = {
-  open: { label: 'Open', color: '#00c864', bg: 'rgba(0,200,100,0.12)' },
-  offers: { label: 'Offers Received', color: '#FFD700', bg: 'rgba(255,215,0,0.12)' },
-  confirmed: { label: 'Confirmed', color: '#c9115f', bg: 'rgba(201,17,95,0.12)' },
-  expired: { label: 'Expired', color: '#6b7280', bg: 'rgba(107,114,128,0.12)' },
-};
 
 function PostRequestForm({ onBack }: { onBack: () => void }) {
   const [sport, setSport] = useState('');
@@ -59,6 +40,32 @@ function PostRequestForm({ onBack }: { onBack: () => void }) {
   const [budget, setBudget] = useState([1000, 3000]);
   const [mode, setMode] = useState<'online' | 'offline'>('online');
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handlePostRequest = async () => {
+    if (!sport || !skill || !goal) {
+      alert('Please fill in all fields');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await storeService.createSessionRequest({
+        userId: 'mock-user-123',
+        sport,
+        skill,
+        goal,
+        budget: `₹${budget[0]}–${budget[1]}/hr`,
+        mode,
+        status: 'open',
+      });
+      setSubmitted(true);
+    } catch (err: any) {
+      alert(err.message || 'Failed to submit request');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (submitted) {
     return (
@@ -70,8 +77,7 @@ function PostRequestForm({ onBack }: { onBack: () => void }) {
         <p className="text-[#99A1AF] text-[13px] mb-6">Coaches will respond within 24 hours. You'll be notified when offers come in.</p>
         <button
           onClick={onBack}
-          className="rounded-full px-8 py-3 text-white text-[14px] font-semibold"
-          style={{ background: 'linear-gradient(135deg,#c9115f,#cd620e)' }}
+          className="rounded-full px-8 py-3 text-white text-[14px] font-semibold bg-gradient-to-r from-[#c9115f] to-[#cd620e]"
         >
           View My Requests
         </button>
@@ -119,19 +125,23 @@ function PostRequestForm({ onBack }: { onBack: () => void }) {
             <span className="text-[#c9115f] text-[13px] font-bold">₹{budget[0].toLocaleString('en-IN')}</span>
             <span className="text-[#c9115f] text-[13px] font-bold">₹{budget[1].toLocaleString('en-IN')}</span>
           </div>
-          <div className="h-[4px] bg-[rgba(255,255,255,0.08)] rounded-full relative">
-            <div
-              className="absolute top-0 h-full rounded-full"
-              style={{
-                background: 'linear-gradient(135deg,#c9115f,#cd620e)',
-                left: `${((budget[0] - 500) / 9500) * 100}%`,
-                right: `${100 - ((budget[1] - 500) / 9500) * 100}%`,
-              }}
+          <div className="flex gap-4">
+            <input
+              type="range"
+              min="500"
+              max="5000"
+              value={budget[0]}
+              onChange={(e) => setBudget([parseInt(e.target.value), budget[1]])}
+              className="flex-1 accent-[#c9115f]"
             />
-          </div>
-          <div className="flex justify-between mt-1">
-            <span className="text-[#4a4a5a] text-[10px]">₹500</span>
-            <span className="text-[#4a4a5a] text-[10px]">₹10,000+</span>
+            <input
+              type="range"
+              min="5000"
+              max="10000"
+              value={budget[1]}
+              onChange={(e) => setBudget([budget[0], parseInt(e.target.value)])}
+              className="flex-1 accent-[#cd620e]"
+            />
           </div>
         </div>
 
@@ -162,72 +172,63 @@ function PostRequestForm({ onBack }: { onBack: () => void }) {
             </button>
           </div>
         </div>
-
-        {mode === 'offline' && (
-          <div>
-            <label className="text-white text-[13px] font-semibold mb-2 block">Location</label>
-            <input
-              placeholder="e.g. Kanteerava Stadium, Bengaluru"
-              className="w-full bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] rounded-[12px] px-4 py-3 text-white text-[14px] placeholder:text-[#4a4a5a] focus:outline-none focus:border-[rgba(201,17,95,0.5)]"
-            />
-          </div>
-        )}
       </div>
 
-      <div
-        className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[390px] px-4 py-4"
-        style={{ background: 'linear-gradient(to top, #0b0b0f 85%, transparent)' }}
-      >
+      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[390px] px-4 py-4 bg-[#0b0b0f] border-t border-[rgba(255,255,255,0.06)]">
         <button
-          onClick={() => setSubmitted(true)}
-          className="w-full rounded-full py-3.5 text-white text-[15px] font-bold transition-all"
-          style={{ background: 'linear-gradient(135deg,#c9115f,#cd620e)', boxShadow: '0 0 20px rgba(201,17,95,0.4)' }}
+          onClick={handlePostRequest}
+          disabled={loading}
+          className="w-full rounded-full py-3.5 text-white text-[15px] font-bold bg-gradient-to-r from-[#c9115f] to-[#cd620e] shadow-[0_0_20px_rgba(201,17,95,0.4)] flex items-center justify-center gap-2"
         >
-          Post Request
+          {loading ? 'Submitting...' : 'Post Request'}
         </button>
       </div>
     </div>
   );
 }
 
-function OffersView({ request }: { request: typeof myRequests[0] }) {
+function OffersView({ request, onBack }: { request: any; onBack: () => void }) {
+  const navigate = useNavigate();
   const [decided, setDecided] = useState<Record<number, 'accept' | 'decline'>>({});
 
   return (
     <div className="flex-1 overflow-y-auto pb-[70px] no-scrollbar px-4 pt-4">
-      <div className="bg-[rgba(255,215,0,0.08)] border border-[rgba(255,215,0,0.2)] rounded-[12px] p-3 mb-4">
-        <p className="text-[#FFD700] text-[12px] font-semibold">3 coaches responded to your request</p>
-        <p className="text-[#a8a8b8] text-[11px] mt-0.5">"{request.goal}"</p>
+      <div className="bg-[#111116] rounded-[18px] border border-[rgba(255,255,255,0.07)] p-4 mb-5">
+        <p className="text-white text-[14px] font-bold mb-1">{request.sport}</p>
+        <p className="text-[#99A1AF] text-[12px] mb-2">{request.skill}</p>
+        <p className="text-[#a8a8b8] text-[12px] leading-snug">"{request.goal}"</p>
       </div>
+
+      <h3 className="text-white text-[13px] font-bold mb-3">Received Offers</h3>
       <div className="flex flex-col gap-3">
-        {offerCards.map((offer) => (
+        {mockOffers.map((offer) => (
           <div key={offer.id} className="bg-[#111116] rounded-[18px] border border-[rgba(255,255,255,0.07)] p-4">
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-[50px] h-[50px] rounded-full overflow-hidden border-2 border-[rgba(201,17,95,0.3)]">
-                <img src={offer.image} alt={offer.name} className="w-full h-full object-cover" />
+              <img src={offer.image} alt={offer.name} className="w-[40px] h-[40px] rounded-full object-cover" />
+              <div className="flex-1 min-w-0">
+                <p className="text-white text-[13px] font-bold truncate">{offer.name}</p>
+                <p className="text-[#5a5a6a] text-[10px] truncate">{offer.role}</p>
               </div>
-              <div className="flex-1">
-                <p className="text-white text-[14px] font-bold">{offer.name}</p>
-                <p className="text-[#99A1AF] text-[11px]">{offer.role}</p>
-                <p className="text-transparent bg-clip-text bg-gradient-to-r from-[#c9115f] to-[#cd620e] text-[13px] font-bold">{offer.price}</p>
-              </div>
-              <div className="text-[#FFD700] text-[12px] font-bold flex items-center gap-0.5">
-                ★ {offer.rating}
+              <div className="text-right flex-shrink-0">
+                <p className="text-[#c9115f] text-[13px] font-black">{offer.price}</p>
+                <p className="text-[#99A1AF] text-[10px]">Rating: {offer.rating}</p>
               </div>
             </div>
-            <p className="text-[#a8a8b8] text-[12px] leading-relaxed italic">"{offer.note}"</p>
+            <p className="text-[#a8a8b8] text-[12px] leading-relaxed mb-3">"{offer.note}"</p>
+            
             {decided[offer.id] ? (
-              <div className="mt-3 flex items-center gap-2">
-                <div
-                  className="flex-1 text-center py-2 rounded-full text-[12px] font-semibold"
-                  style={{
-                    background: decided[offer.id] === 'accept' ? 'rgba(0,200,100,0.12)' : 'rgba(255,255,255,0.05)',
-                    color: decided[offer.id] === 'accept' ? '#00c864' : '#6b7280',
-                    border: `1px solid ${decided[offer.id] === 'accept' ? 'rgba(0,200,100,0.3)' : 'rgba(255,255,255,0.08)'}`,
-                  }}
-                >
-                  {decided[offer.id] === 'accept' ? '✓ Accepted' : '✗ Declined'}
-                </div>
+              <div className="pt-2 border-t border-[rgba(255,255,255,0.05)] text-center">
+                <span className={`text-[12px] font-bold ${decided[offer.id] === 'accept' ? 'text-[#00c864]' : 'text-[#ff4444]'}`}>
+                  Offer {decided[offer.id] === 'accept' ? 'Accepted' : 'Declined'}
+                </span>
+                {decided[offer.id] === 'accept' && (
+                  <button
+                    onClick={() => navigate('/store/booking/1')}
+                    className="mt-2 block w-full py-2 bg-gradient-to-r from-[#c9115f] to-[#cd620e] text-white text-[12px] font-bold rounded-full"
+                  >
+                    Proceed to Booking
+                  </button>
+                )}
               </div>
             ) : (
               <div className="flex gap-2 mt-3">
@@ -256,13 +257,32 @@ function OffersView({ request }: { request: typeof myRequests[0] }) {
 export default function StoreSessionRequests() {
   const navigate = useNavigate();
   const [view, setView] = useState<'list' | 'post' | 'offers'>('list');
-  const [selectedRequest, setSelectedRequest] = useState<typeof myRequests[0] | null>(null);
+  const [selectedRequest, setSelectedRequest] = useState<any | null>(null);
+  const [requests, setRequests] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleRequestClick = (req: typeof myRequests[0]) => {
-    if (req.status === 'offers') {
-      setSelectedRequest(req);
-      setView('offers');
+  const loadRequests = async () => {
+    setLoading(true);
+    try {
+      const data = await storeService.getSessionRequests('mock-user-123');
+      setRequests(data);
+    } catch (err) {
+      console.error('Error fetching session requests:', err);
+    } finally {
+      setLoading(false);
     }
+  };
+
+  useEffect(() => {
+    if (view === 'list') {
+      loadRequests();
+    }
+  }, [view]);
+
+  const handleRequestClick = (req: any) => {
+    // Treat open request as offers-enabled for mock testing/reviewing offers
+    setSelectedRequest(req);
+    setView('offers');
   };
 
   return (
@@ -284,8 +304,7 @@ export default function StoreSessionRequests() {
           {view === 'list' && (
             <button
               onClick={() => setView('post')}
-              className="w-[36px] h-[36px] rounded-full flex items-center justify-center"
-              style={{ background: 'linear-gradient(135deg,#c9115f,#cd620e)' }}
+              className="w-[36px] h-[36px] rounded-full flex items-center justify-center bg-gradient-to-br from-[#c9115f] to-[#cd620e]"
             >
               <Plus className="w-[18px] h-[18px] text-white" />
             </button>
@@ -293,7 +312,7 @@ export default function StoreSessionRequests() {
         </div>
 
         {view === 'post' && <PostRequestForm onBack={() => setView('list')} />}
-        {view === 'offers' && selectedRequest && <OffersView request={selectedRequest} />}
+        {view === 'offers' && selectedRequest && <OffersView request={selectedRequest} onBack={() => setView('list')} />}
 
         {view === 'list' && (
           <div className="flex-1 overflow-y-auto pb-[70px] no-scrollbar">
@@ -301,10 +320,9 @@ export default function StoreSessionRequests() {
             <div className="px-4 pt-4 mb-5">
               <button
                 onClick={() => setView('post')}
-                className="w-full rounded-[16px] p-4 border border-dashed border-[rgba(201,17,95,0.4)] flex items-center gap-3"
-                style={{ background: 'rgba(201,17,95,0.06)' }}
+                className="w-full rounded-[16px] p-4 border border-dashed border-[rgba(201,17,95,0.4)] flex items-center gap-3 bg-[rgba(201,17,95,0.06)]"
               >
-                <div className="w-[42px] h-[42px] rounded-[12px] flex items-center justify-center" style={{ background: 'linear-gradient(135deg,#c9115f,#cd620e)' }}>
+                <div className="w-[42px] h-[42px] rounded-[12px] flex items-center justify-center bg-gradient-to-br from-[#c9115f] to-[#cd620e]">
                   <Plus className="w-[20px] h-[20px] text-white" />
                 </div>
                 <div className="text-left">
@@ -317,48 +335,54 @@ export default function StoreSessionRequests() {
             {/* My Requests */}
             <div className="px-4">
               <p className="text-white text-[14px] font-bold mb-3">My Requests</p>
-              <div className="flex flex-col gap-3">
-                {myRequests.map((req) => {
-                  const sc = statusConfig[req.status];
-                  return (
-                    <button
-                      key={req.id}
-                      className="w-full bg-[#111116] rounded-[18px] border border-[rgba(255,255,255,0.07)] p-4 text-left active:scale-[0.98] transition-transform"
-                      onClick={() => handleRequestClick(req)}
-                    >
-                      <div className="flex items-start justify-between gap-2 mb-2">
-                        <div className="flex-1">
-                          <p className="text-white text-[14px] font-bold">{req.sport}</p>
-                          <p className="text-[#99A1AF] text-[12px]">{req.skill}</p>
-                        </div>
-                        <span
-                          className="text-[10px] font-bold px-2.5 py-1 rounded-full flex-shrink-0"
-                          style={{ background: sc.bg, color: sc.color }}
-                        >
-                          {sc.label}
-                        </span>
-                      </div>
-                      <p className="text-[#a8a8b8] text-[12px] leading-snug mb-3">"{req.goal}"</p>
-                      <div className="flex items-center justify-between pt-2 border-t border-[rgba(255,255,255,0.05)]">
-                        <div className="flex items-center gap-3 text-[11px] text-[#99A1AF]">
-                          <span className="flex items-center gap-1"><DollarSign className="w-[10px] h-[10px]" />{req.budget}</span>
-                          <span className="flex items-center gap-1"><Clock className="w-[10px] h-[10px]" />{req.postedDate}</span>
-                        </div>
-                        {req.status === 'offers' && (
-                          <div className="flex items-center gap-1 text-[#FFD700] text-[11px] font-bold">
-                            {req.offersCount} offers <ChevronRight className="w-[12px] h-[12px]" />
+              {loading ? (
+                <p className="text-center text-[#99A1AF] text-[12px] py-4">Loading requests...</p>
+              ) : requests.length === 0 ? (
+                <div className="bg-[#111116] rounded-[16px] border border-[rgba(255,255,255,0.07)] p-6 text-center mt-2">
+                  <AlertCircle className="w-[24px] h-[24px] text-[#5a5a6a] mx-auto mb-2" />
+                  <p className="text-[#5a5a6a] text-[11px]">No active requests posted yet.</p>
+                </div>
+              ) : (
+                <div className="flex flex-col gap-3">
+                  {requests.map((req) => {
+                    const sc = statusConfig[req.status as RequestStatus] || statusConfig.open;
+                    return (
+                      <button
+                        key={req.id}
+                        className="w-full bg-[#111116] rounded-[18px] border border-[rgba(255,255,255,0.07)] p-4 text-left active:scale-[0.98] transition-transform"
+                        onClick={() => handleRequestClick(req)}
+                      >
+                        <div className="flex items-start justify-between gap-2 mb-2">
+                          <div className="flex-1">
+                            <p className="text-white text-[14px] font-bold">{req.sport}</p>
+                            <p className="text-[#99A1AF] text-[12px]">{req.skill}</p>
                           </div>
-                        )}
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
+                          <span
+                            className="text-[10px] font-bold px-2.5 py-1 rounded-full flex-shrink-0"
+                            style={{ background: sc.bg, color: sc.color }}
+                          >
+                            {sc.label}
+                          </span>
+                        </div>
+                        <p className="text-[#a8a8b8] text-[12px] leading-snug mb-3">"{req.goal}"</p>
+                        <div className="flex items-center justify-between pt-2 border-t border-[rgba(255,255,255,0.05)]">
+                          <div className="flex items-center gap-3 text-[11px] text-[#99A1AF]">
+                            <span className="flex items-center gap-1"><DollarSign className="w-[10px] h-[10px]" />{req.budget}</span>
+                            <span className="flex items-center gap-1"><Clock className="w-[10px] h-[10px]" />Recent</span>
+                          </div>
+                          <div className="flex items-center gap-1 text-[#FFD700] text-[11px] font-bold">
+                            Review Offers <ChevronRight className="w-[12px] h-[12px]" />
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </div>
         )}
       </div>
- 
     </div>
   );
 }

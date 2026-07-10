@@ -6,6 +6,7 @@ import { AthleteProfileModule } from './modules/athlete-profile/athlete-profile.
 import { RecordsModule } from './modules/records/records.module';
 import { PlaybookModule } from './modules/playbook/playbook.module';
 import { ArticlesModule } from './modules/articles/articles.module';
+import { StoreModule } from './modules/store/store.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { ArticlesModule } from './modules/articles/articles.module';
     PlaybookModule,
     RecordsModule,
     ArticlesModule,
+    StoreModule,
   ],
 })
 export class AppModule { }

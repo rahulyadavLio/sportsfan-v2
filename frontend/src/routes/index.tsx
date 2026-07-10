@@ -37,6 +37,8 @@ import StoreDigital from "@/pages/Store/StoreDigital"
 import StoreMemberships from "@/pages/Store/StoreMemberships"
 import StoreAIDolly from "@/pages/Store/StoreAIDolly"
 import StoreTicketedEvents from "@/pages/Store/StoreTicketedEvents"
+import StoreAthleteListingCreate from "@/pages/Store/StoreAthleteListingCreate"
+import StoreWallet from "@/pages/Store/StoreWallet"
 
 export const router = createBrowserRouter([
   {
@@ -72,6 +74,8 @@ export const router = createBrowserRouter([
       { path: "/store/review/:id", Component: StoreReview },
       { path: "/store/experiences", Component: StoreExperiences },
       { path: "/store/session-requests", Component: StoreSessionRequests },
+      { path: "/store/athlete/create", Component: StoreAthleteListingCreate },
+      { path: "/store/wallet", Component: StoreWallet },
       { path: "/store/athletes", Component: StoreAthleteMarketplace },
       { path: "/store/memorabilia", Component: StoreMemorabilia },
       { path: "/store/auctions", Component: StoreAuctions },

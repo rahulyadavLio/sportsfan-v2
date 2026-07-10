@@ -1,17 +1,26 @@
 import { useNavigate, useParams } from 'react-router';
 import { Check, Calendar, Share2, Bookmark, ArrowLeft } from 'lucide-react';
-
-const coachNames: Record<string, string> = {
-  '1': 'Ravi Shastri',
-  '2': 'Priya Sharma',
-  '3': 'Arun Kumar',
-  '4': 'Sneha Patel',
-};
+import { useEffect, useState } from 'react';
+import { storeService } from '@/services/store.service';
 
 export default function StoreBookingSuccess() {
   const navigate = useNavigate();
-  const { id } = useParams();
-  const coachName = coachNames[id || '1'] || 'Ravi Shastri';
+  const { id } = useParams(); // This is the orderId
+  const [order, setOrder] = useState<any>(null);
+
+  useEffect(() => {
+    if (id && id !== '1') {
+      storeService.getUserOrders('mock-user-123')
+        .then((orders) => {
+          const matched = orders.find(o => o.orderId === id || o.id === id);
+          if (matched) setOrder(matched);
+        })
+        .catch((err) => console.error('Error fetching order details:', err));
+    }
+  }, [id]);
+
+  const displayTitle = order ? order.title : 'Technique Analysis · 60 min';
+  const displayId = id ? id.slice(0, 8).toUpperCase() : 'SF360-8471';
 
   return (
     <div className="bg-black w-full flex justify-center min-h-screen">
@@ -49,11 +58,11 @@ export default function StoreBookingSuccess() {
           <div className="w-full bg-[#111116] rounded-[20px] border border-[rgba(255,255,255,0.08)] p-5 mb-6">
             <div className="flex items-center gap-3 mb-4 pb-4 border-b border-[rgba(255,255,255,0.07)]">
               <div className="w-[48px] h-[48px] rounded-full bg-gradient-to-br from-[#c9115f] to-[#cd620e] flex items-center justify-center flex-shrink-0">
-                <span className="text-white text-[18px] font-bold">{coachName[0]}</span>
+                <span className="text-white text-[18px] font-bold">★</span>
               </div>
               <div>
-                <p className="text-white text-[15px] font-bold">{coachName}</p>
-                <p className="text-[#99A1AF] text-[12px]">Technique Analysis · 60 min</p>
+                <p className="text-white text-[15px] font-bold">{displayTitle}</p>
+                <p className="text-[#99A1AF] text-[12px]">Confirmed booking</p>
               </div>
             </div>
             <div className="flex flex-col gap-2.5">
@@ -61,7 +70,7 @@ export default function StoreBookingSuccess() {
                 { label: 'Date', value: 'June 17, 2026' },
                 { label: 'Time', value: '4:00 PM IST' },
                 { label: 'Mode', value: 'Video Call' },
-                { label: 'Booking ID', value: 'SF360-8471' },
+                { label: 'Booking ID', value: displayId },
               ].map(({ label, value }) => (
                 <div key={label} className="flex items-center justify-between">
                   <span className="text-[#99A1AF] text-[13px]">{label}</span>
