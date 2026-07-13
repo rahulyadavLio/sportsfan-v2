@@ -67,9 +67,11 @@ function WorkflowStepper({ active }: { active: number }) {
 function EventCard({
   event,
   onBook,
+  isBooked,
 }: {
   event: any;
   onBook: (id: string) => void;
+  isBooked: boolean;
 }) {
   const [expanded, setExpanded] = useState(false);
   
@@ -178,22 +180,32 @@ function EventCard({
             <p className="text-[#4a4a5a] text-[8px]">per person</p>
             <p className="text-white text-[20px] font-black leading-none">₹{price.toLocaleString('en-IN')}</p>
           </div>
-          <button
-            onClick={() => onBook(event.id)}
-            className="flex-1 py-3 rounded-[14px] text-white text-[13px] font-black flex items-center justify-center gap-2 active:scale-[0.97] transition-transform"
-            style={{ background: `linear-gradient(135deg, ${event.color || '#0ea5e9'}, #cd620e)`, boxShadow: `0 6px 20px ${event.color || '#0ea5e9'}40` }}
-          >
-            <Ticket className="w-[14px] h-[14px]" />
-            Book Now
-            <ArrowUpRight className="w-[13px] h-[13px]" />
-          </button>
+          {isBooked ? (
+            <button
+              disabled
+              className="flex-1 py-3 rounded-[14px] text-[#5a5a6a] text-[13px] font-black flex items-center justify-center gap-2 border border-white/10 bg-white/5 cursor-not-allowed"
+            >
+              <CheckCircle2 className="w-[14px] h-[14px] text-[#00c864]" />
+              Booked
+            </button>
+          ) : (
+            <button
+              onClick={() => onBook(event.id)}
+              className="flex-1 py-3 rounded-[14px] text-white text-[13px] font-black flex items-center justify-center gap-2 active:scale-[0.97] transition-transform"
+              style={{ background: `linear-gradient(135deg, ${event.color || '#0ea5e9'}, #cd620e)`, boxShadow: `0 6px 20px ${event.color || '#0ea5e9'}40` }}
+            >
+              <Ticket className="w-[14px] h-[14px]" />
+              Book Now
+              <ArrowUpRight className="w-[13px] h-[13px]" />
+            </button>
+          )}
         </div>
       </div>
     </div>
   );
 }
 
-function BookingModal({ event, onClose }: { event: any; onClose: () => void }) {
+function BookingModal({ event, onClose, onSuccess }: { event: any; onClose: () => void; onSuccess?: () => void }) {
   if (!event) return null;
 
   const navigate = useNavigate();
@@ -219,6 +231,7 @@ function BookingModal({ event, onClose }: { event: any; onClose: () => void }) {
       const res = await storeService.checkout(payload);
       if (res && res.success) {
         setStep(2);
+        if (onSuccess) onSuccess();
       } else {
         alert('Booking failed');
       }
@@ -630,16 +643,30 @@ export default function StoreTicketedEvents() {
   const [events, setEvents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [bookingId, setBookingId] = useState<string | null>(null);
+  const [bookedEventIds, setBookedEventIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    storeService.getProducts('events')
-      .then((res) => {
+    Promise.all([
+      storeService.getProducts('events'),
+      storeService.getUserOrders('abhishekrt959_gmail_com').catch(() => [])
+    ])
+      .then(([res, orders]) => {
         // Fallback to local mock data if Firestore has 0 event products
         if (res && res.length > 0) {
           setEvents(res);
         } else {
           setEvents(asianGamesEvents);
         }
+        
+        const booked = new Set<string>();
+        if (orders && Array.isArray(orders)) {
+          orders.forEach((o: any) => {
+            if (o.productId && o.status !== 'cancelled') {
+              booked.add(o.productId);
+            }
+          });
+        }
+        setBookedEventIds(booked);
         setLoading(false);
       })
       .catch((err) => {
@@ -703,7 +730,7 @@ export default function StoreTicketedEvents() {
             <p className="text-center text-[#99A1AF] text-[12px] py-10">No events found.</p>
           ) : (
             events.map((ev) => (
-              <EventCard key={ev.id} event={ev} onBook={setBookingId} />
+              <EventCard key={ev.id} event={ev} onBook={setBookingId} isBooked={bookedEventIds.has(ev.id)} />
             ))
           )}
 
@@ -719,7 +746,19 @@ export default function StoreTicketedEvents() {
           </div>
         </div>
 
-        {bookingId && selectedEvent && <BookingModal event={selectedEvent} onClose={() => setBookingId(null)} />}
+        {bookingId && selectedEvent && (
+          <BookingModal 
+            event={selectedEvent} 
+            onClose={() => setBookingId(null)} 
+            onSuccess={() => {
+              setBookedEventIds(prev => {
+                const next = new Set(prev);
+                next.add(selectedEvent.id);
+                return next;
+              });
+            }}
+          />
+        )}
       </div>
     </div>
   );
