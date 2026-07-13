@@ -83,9 +83,30 @@ export class StoreController {
   }
 
   @Get('users/:userId/orders')
-  async getUserOrders(@Param('userId') userId: string) {
-    const activeUserId = userId || 'mock-user-123';
-    return this.storeService.getUserOrders(activeUserId);
+  async getUserOrders(
+    @Param('userId') userId: string,
+    @Query('category') category?: string,
+  ) {
+    const activeUserId = userId || 'abhishekrt959_gmail_com';
+    return this.storeService.getUserOrders(activeUserId, category);
+  }
+
+  @Get('orders/:orderId/experience')
+  async getExperienceOrderById(
+    @Param('orderId') orderId: string,
+    @Query('userId') userId?: string,
+  ) {
+    const activeUserId = userId || 'abhishekrt959_gmail_com';
+    return this.storeService.getExperienceOrderById(orderId, activeUserId);
+  }
+
+  @Get('orders/:orderId/event-pass')
+  async getEventPass(
+    @Param('orderId') orderId: string,
+    @Query('userId') userId?: string,
+  ) {
+    const activeUserId = userId || 'abhishekrt959_gmail_com';
+    return this.storeService.getEventPass(orderId, activeUserId);
   }
 
   @Get('users/:userId/wallet/balance')

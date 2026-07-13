@@ -400,8 +400,22 @@ export class StoreService {
         });
       }
 
+      if ((product.category === 'experience' || product.category === 'experiences') && !slotId) {
+        const seatsBooked = product.seatsBooked || 0;
+        const totalSeats = product.totalSeats || 0;
+        if (seatsBooked >= totalSeats) {
+          throw new BadRequestException('No seats left');
+        }
+        transaction.update(productRef, {
+          seatsBooked: seatsBooked + 1,
+        });
+      }
+
       if (!eventDate && product.date) {
         eventDate = product.date;
+      }
+      if (!eventDate && product.eventStartsAt) {
+        eventDate = product.eventStartsAt;
       }
 
       // 5. If payment method is Wallet, check and deduct balance
@@ -431,9 +445,10 @@ export class StoreService {
         });
       }
 
-      // Generate secure QR/join token if it's an event
+      // Generate secure QR/join token if it's an event or online experience
       const qrToken = randomUUID();
-      const isOnlineEvent = product.category === 'events' && product.type === 'virtual';
+      const isOnlineEvent = (product.category === 'events' && product.type === 'virtual') ||
+                            ((product.category === 'experience' || product.category === 'experiences') && product.type === 'online');
       const joinToken = isOnlineEvent ? randomUUID() : null;
 
       const orderRef = this.db.collection('storeOrders').doc(orderId);
@@ -460,6 +475,19 @@ export class StoreService {
         orderData.checkedInAt = null;
         if (joinToken) {
           orderData.joinToken = joinToken;
+        }
+      }
+
+      if (product.category === 'experience' || product.category === 'experiences') {
+        orderData.eventPassToken = randomUUID();
+        if (product.type === 'online') {
+          orderData.qrToken = qrToken;
+          orderData.eventMode = 'online';
+          orderData.checkedIn = false;
+          orderData.checkedInAt = null;
+          if (joinToken) {
+            orderData.joinToken = joinToken;
+          }
         }
       }
 
@@ -534,16 +562,82 @@ export class StoreService {
     });
   }
 
-  async getUserOrders(userId: string) {
-    const snapshot = await this.db
+  async getUserOrders(userId: string, category?: string) {
+    let query: any = this.db
       .collection('storeOrders')
-      .where('userId', '==', userId)
-      .get();
+      .where('userId', '==', userId);
 
+    if (category) {
+      query = query.where('productType', '==', category);
+    }
+
+    const snapshot = await query.get();
     return snapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
     }));
+  }
+
+  async getExperienceOrderById(orderId: string, userId: string) {
+    const orderDoc = await this.db.collection('storeOrders').doc(orderId).get();
+    if (!orderDoc.exists) {
+      throw new NotFoundException(`Order with ID ${orderId} not found`);
+    }
+    const orderData = orderDoc.data();
+    if (!orderData) {
+      throw new BadRequestException('Order data is empty');
+    }
+    if (orderData.userId !== userId) {
+      throw new BadRequestException('Order does not belong to user');
+    }
+    if (orderData.productType !== 'experience' && orderData.productType !== 'experiences') {
+      throw new BadRequestException('Not an experience order');
+    }
+
+    const productDoc = await this.db.collection('storeProducts').doc(orderData.productId).get();
+    const productData = productDoc.exists ? productDoc.data() : {};
+
+    return {
+      ...orderData,
+      id: orderDoc.id,
+      productDetails: productData,
+    };
+  }
+
+  async getEventPass(orderId: string, userId: string) {
+    const orderDoc = await this.db.collection('storeOrders').doc(orderId).get();
+    if (!orderDoc.exists) {
+      throw new NotFoundException(`Order with ID ${orderId} not found`);
+    }
+    const orderData = orderDoc.data();
+    if (!orderData) {
+      throw new BadRequestException('Order data is empty');
+    }
+    if (orderData.userId !== userId) {
+      throw new BadRequestException('Order does not belong to user');
+    }
+    if (orderData.status === 'cancelled') {
+      throw new BadRequestException('Order is cancelled');
+    }
+
+    const productDoc = await this.db.collection('storeProducts').doc(orderData.productId).get();
+    const productData = (productDoc.exists ? productDoc.data() : {}) as any;
+
+    const userDoc = await this.db.collection('users').doc(userId).get();
+    const userData = userDoc.exists ? userDoc.data() : null;
+    const participantName = userData ? `${userData.firstName || ''} ${userData.lastName || ''}`.trim() : 'Guest';
+
+    return {
+      eventPassToken: orderData.eventPassToken || null,
+      title: orderData.title || productData.title || '',
+      athlete: productData.athlete || '',
+      venue: productData.venue || null,
+      onlineLink: productData.onlineLink || null,
+      date: orderData.eventDate || productData.eventStartsAt || null,
+      bookingId: orderData.orderId,
+      participantName: participantName || 'Guest User',
+      joinToken: orderData.joinToken || null,
+    };
   }
 
   async createSessionRequest(payload: any) {
