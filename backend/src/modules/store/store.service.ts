@@ -178,63 +178,6 @@ export class StoreService {
     });
   }
 
-  async cancelBooking(bookingId: string, userId: string) {
-    const bookingRef = this.db.collection('bookings').doc(bookingId);
-    
-    return await this.db.runTransaction(async (transaction) => {
-      const bookingDoc = await transaction.get(bookingRef);
-      if (!bookingDoc.exists) {
-        throw new NotFoundException('Booking not found');
-      }
-
-      const booking = bookingDoc.data();
-      if (!booking) {
-        throw new BadRequestException('Booking data is empty');
-      }
-      if (booking.userId !== userId) {
-        throw new BadRequestException('Not authorized to cancel this booking');
-      }
-
-      if (booking.status === 'cancelled') {
-        throw new BadRequestException('Booking is already cancelled');
-      }
-
-      // Update booking status
-      transaction.update(bookingRef, {
-        status: 'cancelled',
-        updatedAt: FieldValue.serverTimestamp(),
-      });
-
-      // Release the slot if applicable
-      if (booking.productId && booking.slotId) {
-        const slotRef = this.db
-          .collection('storeProducts')
-          .doc(booking.productId)
-          .collection('slots')
-          .doc(booking.slotId);
-        transaction.update(slotRef, {
-          status: 'available',
-          lockedBy: null,
-          lockExpiresAt: null,
-        });
-      }
-
-      // Trigger wallet refund if paid
-      if (booking.pricePaise > 0) {
-        const refundRef = this.db.collection('wallet_transactions').doc(randomUUID());
-        transaction.set(refundRef, {
-          userId,
-          amountPaise: booking.pricePaise,
-          type: 'credit',
-          description: `Refund for booking cancellation: ${booking.title || 'Coach Session'}`,
-          createdAt: FieldValue.serverTimestamp(),
-        });
-      }
-
-      return { success: true, bookingId };
-    });
-  }
-
   // ==========================================
   // AUCTION & BIDDING ENGINE (Phase 6)
   // ==========================================
@@ -409,12 +352,11 @@ export class StoreService {
         throw new BadRequestException('Product data is empty');
       }
 
-      // 5. Create global order record
+      // 3. Create global order record
       const orderId = randomUUID();
-
       let eventDate: string | null = null;
 
-      // 3. If booking a coach session slot, check and claim slot
+      // 4. If booking a coach session slot, check and claim slot
       if (slotId) {
         const slotRef = productRef.collection('slots').doc(slotId);
         const slotDoc = await transaction.get(slotRef);
@@ -462,7 +404,7 @@ export class StoreService {
         eventDate = product.date;
       }
 
-      // 4. If payment method is Wallet, check and deduct balance
+      // 5. If payment method is Wallet, check and deduct balance
       if (paymentMethod === 'wallet') {
         const currentBalance = await this.getWalletBalance(userId);
         if (currentBalance < pricePaise) {
@@ -477,11 +419,26 @@ export class StoreService {
           description: `Purchase: ${product.title || product.name}`,
           createdAt: FieldValue.serverTimestamp(),
         });
+      } else {
+        // Record non-wallet payment in wallet transactions history
+        const walletTxRef = this.db.collection('wallet_transactions').doc(randomUUID());
+        transaction.set(walletTxRef, {
+          userId,
+          amountPaise: pricePaise,
+          type: 'debit',
+          description: `Purchase (${paymentMethod.toUpperCase()}): ${product.title || product.name}`,
+          createdAt: FieldValue.serverTimestamp(),
+        });
       }
+
+      // Generate secure QR/join token if it's an event
+      const qrToken = randomUUID();
+      const isOnlineEvent = product.category === 'events' && product.type === 'virtual';
+      const joinToken = isOnlineEvent ? randomUUID() : null;
 
       const orderRef = this.db.collection('storeOrders').doc(orderId);
       const initialStatus = product.category === 'digital' ? 'completed' : 'upcoming';
-      const orderData = {
+      const orderData: any = {
         orderId,
         userId,
         productId,
@@ -495,6 +452,17 @@ export class StoreService {
         createdAt: FieldValue.serverTimestamp(),
         updatedAt: FieldValue.serverTimestamp(),
       };
+
+      if (product.category === 'events') {
+        orderData.qrToken = qrToken;
+        orderData.eventMode = product.type === 'virtual' ? 'online' : 'offline';
+        orderData.checkedIn = false;
+        orderData.checkedInAt = null;
+        if (joinToken) {
+          orderData.joinToken = joinToken;
+        }
+      }
+
       transaction.set(orderRef, orderData);
 
       // 6. Denormalize copy for fast user queries
@@ -522,24 +490,6 @@ export class StoreService {
         athleteId: product.athleteId || product.coachId || null,
         createdAt: FieldValue.serverTimestamp(),
       });
-
-      // 8. If slot was booked, also write to bookings table
-      if (slotId) {
-        const bookingId = randomUUID();
-        const bookingRef = this.db.collection('bookings').doc(bookingId);
-        transaction.set(bookingRef, {
-          bookingId,
-          orderId,
-          productId,
-          slotId,
-          userId,
-          coachId: product.coachId || null,
-          title: product.title || product.name,
-          pricePaise,
-          status: 'confirmed',
-          createdAt: FieldValue.serverTimestamp(),
-        });
-      }
 
       // 9. Credit Reward Coins
       const rewardAmount = product.rewardCoins || 0;
@@ -584,17 +534,17 @@ export class StoreService {
     });
   }
 
-async getUserOrders(userId: string) {
-  const snapshot = await this.db
-    .collection('storeOrders')
-    .where('userId', '==', userId)
-    .get();
+  async getUserOrders(userId: string) {
+    const snapshot = await this.db
+      .collection('storeOrders')
+      .where('userId', '==', userId)
+      .get();
 
-  return snapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  }));
-}
+    return snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+  }
 
   async createSessionRequest(payload: any) {
     const requestId = randomUUID();
@@ -731,19 +681,60 @@ async getUserOrders(userId: string) {
     return membership;
   }
 
-  async getBrandDeals() {
-    const snapshot = await this.db.collection('brand_deals').get();
-    return snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
+  async findOrderByQrToken(qrToken: string) {
+    const snapshot = await this.db
+      .collection('storeOrders')
+      .where('qrToken', '==', qrToken)
+      .limit(1)
+      .get();
+
+    if (snapshot.empty) return null;
+    return {
+      id: snapshot.docs[0].id,
+      ...snapshot.docs[0].data(),
+    } as any;
   }
 
-  async getMembershipPlans() {
-    const snapshot = await this.db.collection('membership_plans').get();
-    return snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
+  async findOrderByJoinToken(joinToken: string) {
+    const snapshot = await this.db
+      .collection('storeOrders')
+      .where('joinToken', '==', joinToken)
+      .limit(1)
+      .get();
+
+    if (snapshot.empty) return null;
+    return {
+      id: snapshot.docs[0].id,
+      ...snapshot.docs[0].data(),
+    } as any;
+  }
+
+  async markCheckedIn(orderId: string, userId: string) {
+    const now = new Date();
+    const orderRef = this.db.collection('storeOrders').doc(orderId);
+    const userOrderRef = this.db
+      .collection('users')
+      .doc(userId)
+      .collection('orders')
+      .doc(orderId);
+
+    const batch = this.db.batch();
+    batch.update(orderRef, {
+      checkedIn: true,
+      checkedInAt: now,
+      updatedAt: FieldValue.serverTimestamp(),
+    });
+    batch.update(userOrderRef, {
+      checkedIn: true,
+      checkedInAt: now,
+      updatedAt: FieldValue.serverTimestamp(),
+    });
+    await batch.commit();
+  }
+
+  async getUserDetails(userId: string) {
+    const doc = await this.db.collection('users').doc(userId).get();
+    if (!doc.exists) return null;
+    return doc.data();
   }
 }

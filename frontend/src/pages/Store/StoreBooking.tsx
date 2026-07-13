@@ -111,7 +111,7 @@ export default function StoreBooking() {
         if (remaining <= 0) {
           if (timerRef.current) clearInterval(timerRef.current);
           if (selectedSlotId) {
-            storeService.unlockSlot(`coach-${coachIdStr}`, selectedSlotId, 'mock-user-123').catch(console.error);
+            storeService.unlockSlot(`coach-${coachIdStr}`, selectedSlotId, 'abhishekrt959_gmail_com').catch(console.error);
           }
           setSelectedSlotId(null);
           setLockExpiresAt(null);
@@ -131,7 +131,7 @@ export default function StoreBooking() {
 
   const handleSelectSlot = async (slotId: string) => {
     try {
-      const res = await storeService.lockSlot(`coach-${coachIdStr}`, slotId, 'mock-user-123');
+      const res = await storeService.lockSlot(`coach-${coachIdStr}`, slotId, 'abhishekrt959_gmail_com');
       setSelectedSlotId(slotId);
       setLockExpiresAt(new Date(res.lockExpiresAt).getTime());
     } catch (err: any) {

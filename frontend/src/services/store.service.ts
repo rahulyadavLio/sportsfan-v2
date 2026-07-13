@@ -132,4 +132,7 @@ export const storeService = {
 
   getMembershipPlans: () =>
     api.get<any[]>('/store/membership-plans'),
+
+  validateJoinToken: (joinToken: string) =>
+    api.get<{ success: boolean; meetingUrl: string; event: any }>(`/store/events/join/${joinToken}`),
 };

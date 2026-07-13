@@ -28,8 +28,17 @@ const groupSlotsByDate = (slotList: any[]) => {
   const grouped: Record<string, { date: string; day: string; num: number; times: any[] }> = {};
   const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
+  // Get current date string in local YYYY-MM-DD format
+  const now = new Date();
+  const yyyy = now.getFullYear();
+  const mm = String(now.getMonth() + 1).padStart(2, '0');
+  const dd = String(now.getDate()).padStart(2, '0');
+  const todayStr = `${yyyy}-${mm}-${dd}`;
+
   slotList.forEach(slot => {
     const dStr = slot.date; // e.g. "2026-07-09"
+    if (dStr < todayStr) return; // Only display current date or future dates
+
     if (!grouped[dStr]) {
       const dateObj = new Date(dStr);
       const day = dayNames[dateObj.getDay()];
@@ -122,7 +131,7 @@ export default function StoreCoachProfile() {
     setLockingSlot(true);
 
     try {
-      const res = await storeService.lockSlot(`coach-${id || '1'}`, selectedSlotId, 'mock-user-123');
+      const res = await storeService.lockSlot(`coach-${id || '1'}`, selectedSlotId, 'abhishekrt959_gmail_com');
       if (res.status === 'locked' || res.lockExpiresAt) {
         // Success: navigate to booking screen carrying parameters
         navigate(`/store/booking/${id || '1'}?date=${currentSlot.date}&time=${selectedTime}&day=${currentSlot.day}&num=${currentSlot.num}&serviceIndex=${selectedService}`);
@@ -279,7 +288,7 @@ export default function StoreCoachProfile() {
                   btnBg = 'rgba(255,255,255,0.02)';
                   btnBorder = '1px solid rgba(255,255,255,0.04)';
                   btnColor = '#4a4a5a';
-                } else if (isLocked && t.lockedBy !== 'mock-user-123') {
+                } else if (isLocked && t.lockedBy !== 'abhishekrt959_gmail_com') {
                   btnBg = 'rgba(255,255,255,0.02)';
                   btnBorder = '1px solid rgba(255,255,255,0.04)';
                   btnColor = '#4a4a5a';
@@ -288,7 +297,7 @@ export default function StoreCoachProfile() {
                 return (
                   <button
                     key={t.id}
-                    disabled={isBooked || (isLocked && t.lockedBy !== 'mock-user-123')}
+                    disabled={isBooked || (isLocked && t.lockedBy !== 'abhishekrt959_gmail_com')}
                     onClick={() => handleSlotSelect(t)}
                     className="rounded-full px-4 py-2 text-[13px] font-semibold transition-all relative"
                     style={{
@@ -303,7 +312,7 @@ export default function StoreCoachProfile() {
                         Booked
                       </span>
                     )}
-                    {!isBooked && isLocked && t.lockedBy !== 'mock-user-123' && (
+                    {!isBooked && isLocked && t.lockedBy !== 'abhishekrt959_gmail_com' && (
                       <span className="absolute -top-1 -right-1 text-[8px] font-bold px-1 py-0.2 bg-[rgba(255,215,0,0.15)] text-[#FFD700] border border-[rgba(255,215,0,0.3)] rounded-full">
                         Locked
                       </span>

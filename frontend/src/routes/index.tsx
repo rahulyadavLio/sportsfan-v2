@@ -39,6 +39,7 @@ import StoreAIDolly from "@/pages/Store/StoreAIDolly"
 import StoreTicketedEvents from "@/pages/Store/StoreTicketedEvents"
 import StoreAthleteListingCreate from "@/pages/Store/StoreAthleteListingCreate"
 import StoreWallet from "@/pages/Store/StoreWallet"
+import StoreEventsJoin from "@/pages/Store/StoreEventsJoin"
 
 export const router = createBrowserRouter([
   {
@@ -84,6 +85,7 @@ export const router = createBrowserRouter([
       { path: "/store/memberships", Component: StoreMemberships },
       { path: "/store/dolly", Component: StoreAIDolly },
       { path: "/store/ticketed-events", Component: StoreTicketedEvents },
+      { path: "/store/events/join/:joinToken", Component: StoreEventsJoin },
       { path: "/athlete/afi", Component: AFIProfile },
       { path: "/articles/:id", Component: ArticleDetails },
     ],

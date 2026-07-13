@@ -20,7 +20,7 @@ export default function StorePayment() {
 
   // Fetch wallet balance
   useEffect(() => {
-    storeService.getWalletBalance('mock-user-123')
+    storeService.getWalletBalance('abhishekrt959_gmail_com')
       .then((res) => setWalletBalance(res.balancePaise))
       .catch((err) => console.error('Error fetching wallet balance:', err));
   }, []);
@@ -31,7 +31,7 @@ export default function StorePayment() {
       const res = await storeService.checkout({
         productId: id || 'coach-1',
         slotId: slotId,
-        userId: 'mock-user-123',
+        userId: 'abhishekrt959_gmail_com',
         paymentMethod: selected as any,
         pricePaise,
         idempotencyKey,

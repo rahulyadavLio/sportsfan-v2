@@ -120,9 +120,9 @@ export default function StoreScreen() {
 
       // Fetch user coins, wishlist, recently viewed
       const [coinsRes, wishlistRes, recentRes] = await Promise.all([
-        storeService.getCoinsBalance('mock-user-123'),
-        storeService.getWishlist('mock-user-123'),
-        storeService.getRecentlyViewed('mock-user-123'),
+        storeService.getCoinsBalance('abhishekrt959_gmail_com'),
+        storeService.getWishlist('abhishekrt959_gmail_com'),
+        storeService.getRecentlyViewed('abhishekrt959_gmail_com'),
       ]);
 
       setCoins(coinsRes.balance);
@@ -141,7 +141,7 @@ export default function StoreScreen() {
 
   const handleProductClick = async (productId: string, route: string) => {
     try {
-      await storeService.addRecentlyViewed('mock-user-123', productId);
+      await storeService.addRecentlyViewed('abhishekrt959_gmail_com', productId);
     } catch (e) {
       console.error(e);
     }
@@ -153,8 +153,8 @@ export default function StoreScreen() {
     const isWishlisted = wishlist.some(item => item.productId === productId || item.id === productId);
     const action = isWishlisted ? 'remove' : 'add';
     try {
-      await storeService.toggleWishlist('mock-user-123', productId, action);
-      const updated = await storeService.getWishlist('mock-user-123');
+      await storeService.toggleWishlist('abhishekrt959_gmail_com', productId, action);
+      const updated = await storeService.getWishlist('abhishekrt959_gmail_com');
       setWishlist(updated);
     } catch (err) {
       console.error(err);

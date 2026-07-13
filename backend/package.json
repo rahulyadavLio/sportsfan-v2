@@ -11,6 +11,7 @@
     "seed:athletes": "ts-node src/scripts/seed-athletes.ts",
     "seed:records": "ts-node src/scripts/seed-records.ts",
     "seed:articles": "node src/scripts/seed-articles.js",
+    "seed:user": "ts-node src/scripts/seed-mock-user.ts",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",

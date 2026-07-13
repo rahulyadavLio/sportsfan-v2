@@ -10,7 +10,7 @@ export default function StoreBookingSuccess() {
 
   useEffect(() => {
     if (id && id !== '1') {
-      storeService.getUserOrders('mock-user-123')
+      storeService.getUserOrders('abhishekrt959_gmail_com')
         .then((orders) => {
           const matched = orders.find(o => o.orderId === id || o.id === id);
           if (matched) setOrder(matched);

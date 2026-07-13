@@ -16,10 +16,10 @@ export default function StoreWallet() {
     setLoading(true);
     try {
       const [walletRes, coinsRes, walletTxRes, coinsTxRes] = await Promise.all([
-        storeService.getWalletBalance('mock-user-123'),
-        storeService.getCoinsBalance('mock-user-123'),
-        storeService.getWalletTransactions('mock-user-123'),
-        storeService.getCoinsTransactions('mock-user-123'),
+        storeService.getWalletBalance('abhishekrt959_gmail_com'),
+        storeService.getCoinsBalance('abhishekrt959_gmail_com'),
+        storeService.getWalletTransactions('abhishekrt959_gmail_com'),
+        storeService.getCoinsTransactions('abhishekrt959_gmail_com'),
       ]);
 
       setWalletBalance(walletRes.balancePaise);

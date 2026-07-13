@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Query, BadRequestException, NotFoundException } from '@nestjs/common';
 import { StoreService } from './store.service';
 
 @Controller('store')
@@ -63,14 +63,6 @@ export class StoreController {
     return this.storeService.placeBid(id, amountPaise, activeUserId);
   }
 
-  @Post('bookings/:id/cancel')
-  async cancelBooking(
-    @Param('id') bookingId: string,
-    @Body('userId') userId: string,
-  ) {
-    const activeUserId = userId || 'mock-user-123';
-    return this.storeService.cancelBooking(bookingId, activeUserId);
-  }
 
   @Post('checkout')
   async checkout(
@@ -179,13 +171,71 @@ export class StoreController {
     return this.storeService.updateUserMembership(activeUserId, tier);
   }
 
-  @Get('brand-deals')
-  async getBrandDeals() {
-    return this.storeService.getBrandDeals();
+
+  @Get('events/checkin/:qrToken')
+  async checkInEvent(@Param('qrToken') qrToken: string) {
+    const order = await this.storeService.findOrderByQrToken(qrToken);
+    if (!order) {
+      throw new NotFoundException('Booking order not found for this QR token');
+    }
+
+    if (order.status !== 'upcoming') {
+      throw new BadRequestException(`Order is not active (current status: ${order.status})`);
+    }
+
+    if (order.eventMode !== 'offline') {
+      throw new BadRequestException('This check-in link is for offline/in-person events only');
+    }
+
+    if (order.checkedIn === true) {
+      throw new BadRequestException('Attendee has already checked in for this event');
+    }
+
+    await this.storeService.markCheckedIn(order.orderId, order.userId);
+
+    const user = await this.storeService.getUserDetails(order.userId);
+
+    return {
+      success: true,
+      message: 'Check-in successful!',
+      attendee: {
+        userId: order.userId,
+        firstName: user?.firstName || 'Mock',
+        lastName: user?.lastName || 'User',
+        email: user?.email || '',
+      },
+      event: {
+        title: order.title,
+        eventDate: order.eventDate || '',
+        eventMode: order.eventMode,
+      },
+    };
   }
 
-  @Get('membership-plans')
-  async getMembershipPlans() {
-    return this.storeService.getMembershipPlans();
+  @Get('events/join/:joinToken')
+  async joinEvent(@Param('joinToken') joinToken: string) {
+    const order = await this.storeService.findOrderByJoinToken(joinToken);
+    if (!order) {
+      throw new NotFoundException('Booking order not found for this join token');
+    }
+
+    if (order.status !== 'upcoming') {
+      throw new BadRequestException(`Booking is not active (current status: ${order.status})`);
+    }
+
+    if (order.eventMode !== 'online') {
+      throw new BadRequestException('This join link is for online events only');
+    }
+
+    // Expose temporary meeting/live-room URL
+    const mockMeetingUrl = `https://zoom.us/j/mock-meeting-${order.orderId.substring(0, 8)}`;
+    return {
+      success: true,
+      meetingUrl: mockMeetingUrl,
+      event: {
+        title: order.title,
+        eventDate: order.eventDate || '',
+      },
+    };
   }
 }
