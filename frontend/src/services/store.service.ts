@@ -82,8 +82,14 @@ export const storeService = {
     api.post<any>(`/store/products/${productId}/bids`, { amountPaise, userId }),
 
   // User Orders
-  getUserOrders: (userId: string) =>
-    api.get<any[]>(`/store/users/${userId}/orders`),
+  getUserOrders: (userId: string, category?: string) =>
+    api.get<any[]>(`/store/users/${userId}/orders${category ? `?category=${category}` : ''}`),
+
+  getExperienceOrderById: (orderId: string, userId?: string) =>
+    api.get<any>(`/store/orders/${orderId}/experience${userId ? `?userId=${userId}` : ''}`),
+
+  getEventPass: (orderId: string, userId?: string) =>
+    api.get<any>(`/store/orders/${orderId}/event-pass${userId ? `?userId=${userId}` : ''}`),
 
   // Wallet
   getWalletBalance: (userId: string) =>

@@ -40,13 +40,21 @@ import StoreTicketedEvents from "@/pages/Store/StoreTicketedEvents"
 import StoreAthleteListingCreate from "@/pages/Store/StoreAthleteListingCreate"
 import StoreWallet from "@/pages/Store/StoreWallet"
 import StoreEventsJoin from "@/pages/Store/StoreEventsJoin"
-
+import StoreMyExperiences from "@/pages/Store/StoreMyExperiences"
+import StoreExperienceDetail from "@/pages/Store/StoreExperienceDetail"
+import StoreExperienceOrderDetail from "@/pages/Store/StoreExperienceOrderDetail"
+import StoreEventPass from "@/pages/Store/StoreEventPass"
 export const router = createBrowserRouter([
   {
     // AppLayout wraps all main routes — provides the persistent bottom nav bar
     Component: AppLayout,
     children: [
       { path: "/", Component: HomeScreen },
+      { path: "/store/my-experiences", Component: StoreMyExperiences },
+      { path: "/store/experience/:id", Component: StoreExperienceDetail },
+      { path: "/store/experience-order/:id", Component: StoreExperienceOrderDetail },
+      { path: "/store/event-pass/:id", Component: StoreEventPass },
+
       { path: "/athlete/:id", Component: AthleteProfile },
       { path: "/playbook", Component: Playbook },
       { path: "/audio/:id", Component: AudioPlayerScreen },
